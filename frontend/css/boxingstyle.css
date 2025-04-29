@@ -1,0 +1,28 @@
+.subscription-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subscription-item {
+    background-color: #4e4e50;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 16px 24px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.subscription-item:hover {
+    background-color: #6f2232;
+    transform: scale(1.02);
+}
