@@ -5,14 +5,21 @@
     <meta charset="UTF-8">
     <title>Реєстрація</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/all.js" defer></script>
 </head>
 
 <body>
     <h2>Реєстрація</h2>
     <form id="register-form">
-        <label>Логін: <input type="text" name="username" required /></label><br>
-        <label>Пароль: <input type="password" name="password" required /></label><br>
-        <label>Підтвердження пароля: <input type="password" name="confirmPassword" required /></label><br>
+        <label>Логін:
+            <input type="text" name="username" id="username" required />
+        </label><br>
+        <label>Пароль:
+            <input type="password" name="password" id="password" required />
+        </label><br>
+        <label>Підтвердження пароля:
+            <input type="password" name="confirmPassword" id="confirmPassword" required />
+        </label><br>
         <button type="submit" class="nav-btn">Зареєструватися</button>
     </form>
     <p id="error-message" style="color: red;"></p>
