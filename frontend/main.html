@@ -7,13 +7,14 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/mainstyle.css" />
   <script src="js/all.js" defer></script>
+  <script src="js/calendar.js" defer></script>
 </head>
 
 <body>
   <header>
     <div class="header-content">
       <div class="nav-left"></div>
-      <h1 class="center-title">Phenix</h1>
+      <a href="main.html" class="center-title">Phenix</a>
       <div class="nav-container">
         <div class="guest">
           <a href="login.html" class="nav-btn">Увійти</a>
@@ -30,6 +31,14 @@
 
   <main class="main-content">
     <div class="main-columns">
+      <section class="schedule">
+        <h2>Часи роботи комплексу</h2>
+        <ul>
+          <li>Пн-Пт: 07:00 – 22:00</li>
+          <li>Сб: 09:00 – 20:00</li>
+          <li>Нд: 10:00 – 18:00</li>
+        </ul>
+      </section>
       <section class="subscriptions">
         <h2 class="title">Наші абонементи</h2>
         <div class="card-container">
@@ -55,6 +64,30 @@
             </button>
           </div>
         </div>
+      </section>
+      <section class="schedule">
+        <h2>Записатися</h2>
+        <div id="calendar">
+          <div class="calendar-header">
+            <button id="prev-month">&lt;</button>
+            <h3 id="calendar-month"></h3>
+            <button id="next-month">&gt;</button>
+          </div>
+          <div class="calendar-weekdays">
+            <div>Пн</div>
+            <div>Вт</div>
+            <div>Ср</div>
+            <div>Чт</div>
+            <div>Пт</div>
+            <div>Сб</div>
+            <div>Нд</div>
+          </div>
+          <div id="calendar-days" class="calendar-grid"></div>
+          <div style="text-align: center; margin-top: 10px;">
+            <button id="go-today">Сьогодні</button>
+          </div>
+        </div>
+
       </section>
     </div>
   </main>

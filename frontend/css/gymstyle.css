@@ -21,6 +21,7 @@
   text-align: center;
   align-self: flex-start;
   margin-left: 0;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
 }
 
 .schedule h2 {
