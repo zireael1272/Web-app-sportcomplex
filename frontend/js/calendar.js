@@ -55,7 +55,6 @@ function generateCalendar(date) {
         daysContainer.appendChild(div);
     }
 
-    // Кнопки обмеження
     const prevBtn = document.getElementById("prev-month");
     const nextBtn = document.getElementById("next-month");
 

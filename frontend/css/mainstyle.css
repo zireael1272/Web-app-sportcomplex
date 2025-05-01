@@ -5,7 +5,11 @@
 .main-columns {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 100px;
+  padding: 0 70px;
+}
+
+.subscriptions {
+  padding: 40px 50px;
 }
 
 .card-container {
@@ -49,12 +53,13 @@
   flex: 0 0 270px;
   background-color: #1a1a1d;
   color: #fff;
-  padding: 20px 40px;
+  padding: 20px 30px;
   border-radius: 12px;
   text-align: center;
   align-self: flex-start;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
 }
+
 .schedule h2 {
   font-size: 24px;
   margin-bottom: 15px;
@@ -77,15 +82,10 @@
   border-bottom: none;
 }
 
-.subscriptions {
-  padding: 40px 50px;
-}
-
-
 #calendar {
   margin-top: 20px;
   background-color: #1a1a1d;
-  padding: 16px;
+  padding: 10px;
   border-radius: 12px;
   color: white;
   max-width: 300px;
@@ -143,6 +143,22 @@
   pointer-events: none;
 }
 
+.calendar-legend {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
 
 .fitness {
   background-color: orange;
@@ -150,4 +166,14 @@
 
 .boxing {
   background-color: dodgerblue;
+}
+
+.day.fitness {
+  background-color: orange;
+  color: black;
+}
+
+.day.boxing {
+  background-color: dodgerblue;
+  color: white;
 }
