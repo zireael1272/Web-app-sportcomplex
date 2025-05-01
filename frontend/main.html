@@ -1,115 +1,126 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Головна | Спортивний центр Phenix</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/mainstyle.css" />
+    <script src="js/all.js" defer></script>
+    <script src="js/calendar.js" defer></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Головна | Спортивний центр Phenix</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/mainstyle.css" />
-  <script src="js/all.js" defer></script>
-  <script src="js/calendar.js" defer></script>
-</head>
-
-<body>
-  <header>
-    <div class="header-content">
-      <div class="nav-left"></div>
-      <a href="main.html" class="center-title">Phenix</a>
-      <div class="nav-container">
-        <div class="guest">
-          <a href="login.html" class="nav-btn">Увійти</a>
-          <a href="register.html" class="nav-btn">Зареєструватися</a>
-        </div>
-        <div class="user" style="display: none">
-          <img class="avatar" src="/images/user.png" alt="Avatar" />
-          <span class="username">Username</span>
-          <a href="#" id="logout-btn" class="nav-btn">Вийти</a>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="nav-left"></div>
+        <a href="main.html" class="center-title">Phenix</a>
+        <div class="nav-container">
+          <div class="guest">
+            <a href="login.html" class="nav-btn">Увійти</a>
+            <a href="register.html" class="nav-btn">Зареєструватися</a>
+          </div>
+          <div class="user" style="display: none">
+            <img class="avatar" src="/images/user.png" alt="Avatar" />
+            <span class="username">Username</span>
+            <a href="#" id="logout-btn" class="nav-btn">Вийти</a>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="main-content">
-    <div class="main-columns">
-      <section class="schedule">
-        <h2>Часи роботи комплексу</h2>
-        <ul>
-          <li>Пн-Пт: 07:00 – 22:00</li>
-          <li>Сб: 09:00 – 20:00</li>
-          <li>Нд: 10:00 – 18:00</li>
-        </ul>
-      </section>
-      <section class="subscriptions">
-        <h2 class="title">Наші абонементи</h2>
-        <div class="card-container">
-          <div class="card">
-            <img src="/images/gym.jpg" alt="Тренажерний" />
-            <h3>Тренажерний зал</h3>
-            <button type="submit" onclick="location.href='gym.html'" class="nav-btn">
-              Детальніше
-            </button>
+    <main class="main-content">
+      <div class="main-columns">
+        <section class="schedule">
+          <h2>Часи роботи комплексу</h2>
+          <ul>
+            <li>Пн-Пт: 07:00 – 22:00</li>
+            <li>Сб: 09:00 – 20:00</li>
+            <li>Нд: 10:00 – 18:00</li>
+          </ul>
+        </section>
+        <section class="subscriptions">
+          <h2 class="title">Наші абонементи</h2>
+          <div class="card-container">
+            <div class="card">
+              <img src="/images/gym.jpg" alt="Тренажерний" />
+              <h3>Тренажерний зал</h3>
+              <button
+                type="submit"
+                onclick="location.href='gym.html'"
+                class="nav-btn"
+              >
+                Детальніше
+              </button>
+            </div>
+            <div class="card">
+              <img src="/images/fitnes.jpg" alt="Фітнес" />
+              <h3>Фітнес</h3>
+              <button
+                type="submit"
+                onclick="location.href='fitnes.html'"
+                class="nav-btn"
+              >
+                Детальніше
+              </button>
+            </div>
+            <div class="card">
+              <img src="/images/boxing.jpg" alt="Бокс" />
+              <h3>Бокс</h3>
+              <button
+                type="submit"
+                onclick="location.href='boxing.html'"
+                class="nav-btn"
+              >
+                Детальніше
+              </button>
+            </div>
           </div>
-          <div class="card">
-            <img src="/images/fitnes.jpg" alt="Фітнес" />
-            <h3>Фітнес</h3>
-            <button type="submit" onclick="location.href='fitnes.html'" class="nav-btn">
-              Детальніше
-            </button>
+        </section>
+        <section class="schedule">
+          <h2>Записатися</h2>
+          <div class="calendar-legend">
+            <span class="legend-box fitness"></span> Фітнес
+            <span class="legend-box boxing"></span> Бокс
           </div>
-          <div class="card">
-            <img src="/images/boxing.jpg" alt="Бокс" />
-            <h3>Бокс</h3>
-            <button type="submit" onclick="location.href='boxing.html'" class="nav-btn">
-              Детальніше
-            </button>
+          <div id="calendar">
+            <div class="calendar-header">
+              <button id="prev-month">&lt;</button>
+              <h3 id="calendar-month"></h3>
+              <button id="next-month">&gt;</button>
+            </div>
+            <div class="calendar-weekdays">
+              <div>Пн</div>
+              <div>Вт</div>
+              <div>Ср</div>
+              <div>Чт</div>
+              <div>Пт</div>
+              <div>Сб</div>
+              <div>Нд</div>
+            </div>
+            <div id="calendar-days" class="calendar-grid"></div>
+            <div style="text-align: center; margin-top: 10px">
+              <button id="go-today" class="nav-btn">Сьогодні</button>
+            </div>
           </div>
-        </div>
-      </section>
-      <section class="schedule">
-        <h2>Записатися</h2>
-        <div class="calendar-legend">
-          <span class="legend-box fitness"></span> Фітнес
-          <span class="legend-box boxing"></span> Бокс
-        </div>
-        <div id="calendar">
-          <div class="calendar-header">
-            <button id="prev-month">&lt;</button>
-            <h3 id="calendar-month"></h3>
-            <button id="next-month">&gt;</button>
-          </div>
-          <div class="calendar-weekdays">
-            <div>Пн</div>
-            <div>Вт</div>
-            <div>Ср</div>
-            <div>Чт</div>
-            <div>Пт</div>
-            <div>Сб</div>
-            <div>Нд</div>
-          </div>
-          <div id="calendar-days" class="calendar-grid"></div>
-          <div style="text-align: center; margin-top: 10px;">
-            <button id="go-today" class="nav-btn">Сьогодні</button>
-          </div>
-        </div>
-
-      </section>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-section">
-      <img src="images/phoenix.png" alt="Logo" class="footer-logo" />
-      <div class="footer-info">
-        <p><b>Адреса:</b> м. Київ, вул. Спортивна, 10</p>
-        <p><b>Телефон:</b> +380 (50) 123 45 67</p>
-        <p>
-          <b>Email:</b>
-          <a href="mailto:support@phenixcenter.com">support@phenixcenter.com</a>
-        </p>
+        </section>
       </div>
-    </div>
-  </footer>
-  <script src="/js/main.js"></script>
-</body>
+    </main>
 
+    <footer class="footer">
+      <div class="footer-section">
+        <img src="images/phoenix.png" alt="Logo" class="footer-logo" />
+        <div class="footer-info">
+          <p><b>Адреса:</b> м. Київ, вул. Спортивна, 10</p>
+          <p><b>Телефон:</b> +380 (50) 123 45 67</p>
+          <p>
+            <b>Email:</b>
+            <a href="mailto:support@phenixcenter.com"
+              >support@phenixcenter.com</a
+            >
+          </p>
+        </div>
+      </div>
+    </footer>
+    <script src="/js/main.js"></script>
+  </body>
 </html>

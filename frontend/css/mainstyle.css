@@ -3,13 +3,14 @@
 }
 
 .main-columns {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0 70px;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; /* Три колонки рівної ширини */
+  gap: 20px;
 }
 
 .subscriptions {
   padding: 40px 50px;
+  grid-column: span 2;
 }
 
 .card-container {
@@ -176,4 +177,22 @@
 .day.boxing {
   background-color: dodgerblue;
   color: white;
+}
+
+.schedule,
+.subscriptions,
+.calendar-legend {
+  flex: 0 1 30%;
+  min-width: 200px;
+}
+
+.schedule,
+.subscriptions,
+.schedule + .schedule {
+  flex: 1;
+}
+
+.schedule,
+.schedule + .schedule {
+  grid-column: span 1;
 }
