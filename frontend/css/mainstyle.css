@@ -4,7 +4,7 @@
 
 .main-columns {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* Три колонки рівної ширини */
+  grid-template-columns: 1fr 2fr 1fr;
   gap: 20px;
 }
 
