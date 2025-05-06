@@ -6,27 +6,22 @@
 
 body {
   background-color: #4e4e50;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   color: white;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin: 0;
 }
 
 header {
   background-color: #1a1a1a;
   color: #c3073f;
-  padding: 30px;
+  padding: 24px;
 }
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
 }
 
 .center-title {
@@ -36,8 +31,7 @@ header {
   text-align: center;
   line-height: 1;
   margin: 0 auto;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 45%;
   font-size: 40px;
   text-decoration: none;
   color: #c3073f;
@@ -59,12 +53,47 @@ header {
 }
 
 .subscriptions {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 40px 20px;
   background-color: #1a1a1d;
   border-radius: 12px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+}
+
+.schedule {
+  flex: 0 0 180px;
+  max-width: 180px;
+  background-color: #1a1a1d;
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 12px;
+  text-align: center;
+  align-self: flex-start;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  margin-bottom: 20px;
+}
+
+.schedule h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.schedule ul {
+  list-style: none;
+  padding-left: 0;
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+}
+
+.schedule li {
+  font-size: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #444;
+}
+
+.schedule li:last-child {
+  border-bottom: none;
 }
 
 .nav-container {

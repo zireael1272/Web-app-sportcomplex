@@ -41,43 +41,43 @@
         <section class="subscriptions">
           <h2 class="title">Наші абонементи</h2>
           <div class="card-container">
-            <div class="card">
-              <img src="/images/gym.jpg" alt="Тренажерний" />
-              <h3>Тренажерний зал</h3>
-              <button
-                type="submit"
-                onclick="location.href='gym.html'"
-                class="nav-btn"
+            <a href="gym.html" class="card">
+              <div
+                class="card-image"
+                style="background-image: url('/images/gym.jpg')"
               >
-                Детальніше
-              </button>
-            </div>
-            <div class="card">
-              <img src="/images/fitnes.jpg" alt="Фітнес" />
-              <h3>Фітнес</h3>
-              <button
-                type="submit"
-                onclick="location.href='fitnes.html'"
-                class="nav-btn"
+                <div class="card-overlay">
+                  <span class="card-text title">Тренажерний зал</span>
+                  <span class="card-text detail">Детальніше</span>
+                </div>
+              </div>
+            </a>
+            <a href="fitnes.html" class="card">
+              <div
+                class="card-image"
+                style="background-image: url('/images/fitnes.jpg')"
               >
-                Детальніше
-              </button>
-            </div>
-            <div class="card">
-              <img src="/images/boxing.jpg" alt="Бокс" />
-              <h3>Бокс</h3>
-              <button
-                type="submit"
-                onclick="location.href='boxing.html'"
-                class="nav-btn"
+                <div class="card-overlay">
+                  <span class="card-text title">Фітнес</span>
+                  <span class="card-text detail">Детальніше</span>
+                </div>
+              </div>
+            </a>
+            <a href="boxing.html" class="card">
+              <div
+                class="card-image"
+                style="background-image: url('/images/boxing.jpg')"
               >
-                Детальніше
-              </button>
-            </div>
+                <div class="card-overlay">
+                  <span class="card-text title">Бокс</span>
+                  <span class="card-text detail">Детальніше</span>
+                </div>
+              </div>
+            </a>
           </div>
         </section>
-        <section class="schedule">
-          <h2>Записатися</h2>
+        <section class="calendar">
+          <h2>Календар занять</h2>
           <div class="calendar-legend">
             <span class="legend-box fitness"></span> Фітнес
             <span class="legend-box boxing"></span> Бокс

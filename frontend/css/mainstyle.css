@@ -1,16 +1,34 @@
 .main-content {
-  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 20px;
 }
 
 .main-columns {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.schedule,
+.subscriptions,
+.calendar {
+  background-color: #1a1a1d;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  color: white;
+  flex: 1 1 30%;
+  margin-bottom: 20px;
 }
 
 .subscriptions {
-  padding: 40px 50px;
-  grid-column: span 2;
+  flex: 1 1 60%;
+  padding: 20px;
 }
 
 .card-container {
@@ -18,26 +36,67 @@
   justify-content: center;
   gap: 36px;
   flex-wrap: wrap;
-  margin: 30px 0;
+  margin: 20px 0;
 }
 
 .card {
-  background-color: #4e4e50;
+  display: block;
+  position: relative;
+  width: 250px;
+  height: 270px;
   border-radius: 12px;
-  padding: 16px;
-  width: 270px;
-  height: 300px;
+  overflow: hidden;
+  text-decoration: none;
   box-shadow: 0 0 10px white;
-  text-align: center;
-  transition: transform 0.3s;
+  cursor: pointer;
 }
 
-.card img {
+.card-image {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card-image {
+  transform: scale(1.1);
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-text {
+  position: absolute;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  transition: opacity 0.3s ease;
+}
+
+.card-text.title {
+  opacity: 1;
+}
+
+.card-text.detail {
+  opacity: 0;
+}
+
+.card:hover .card-text.title {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+.card:hover .card-text.detail {
+  opacity: 1;
+  transition-delay: 0s;
 }
 
 .title {
@@ -50,61 +109,41 @@
   transform: scale(1.03);
 }
 
-.schedule {
-  flex: 0 0 270px;
+.calendar {
+  flex: 0 0 220px;
   background-color: #1a1a1d;
   color: #fff;
-  padding: 20px 30px;
-  border-radius: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
   text-align: center;
   align-self: flex-start;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
-}
-
-.schedule h2 {
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-.schedule ul {
-  list-style: none;
-  padding-left: 0;
-  border-top: 1px solid #444;
-  border-bottom: 1px solid #444;
-}
-
-.schedule li {
-  font-size: 18px;
-  padding: 10px 0;
-  border-bottom: 1px solid #444;
-}
-
-.schedule li:last-child {
-  border-bottom: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  margin-bottom: 20px;
+  font-size: 13px;
 }
 
 #calendar {
-  margin-top: 20px;
+  margin-top: 10px;
   background-color: #1a1a1d;
-  padding: 10px;
-  border-radius: 12px;
+  border-radius: 10px;
   color: white;
-  max-width: 300px;
+  max-width: 240px;
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .calendar-header button {
   background-color: #444;
   color: white;
   border: none;
-  padding: 4px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -112,29 +151,27 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 2px;
   justify-items: center;
 }
 
 .day {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #4e4e50;
-  color: white;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
 }
 
 .day.disabled {
@@ -150,6 +187,7 @@
   justify-content: center;
   margin-bottom: 10px;
   font-size: 16px;
+  padding: 10px;
 }
 
 .legend-box {
@@ -159,6 +197,11 @@
   margin-right: 5px;
   border-radius: 4px;
   vertical-align: middle;
+}
+
+#go-today {
+  font-size: 12px;
+  padding: 6px 10px;
 }
 
 .fitness {
