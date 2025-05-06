@@ -1,0 +1,29 @@
+.profile-container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 30px 250px;
+  background-color: #1a1a1d;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+}
+
+.profile-section {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #4e4e50;
+  padding-bottom: 20px;
+}
+
+.profile-section h2 {
+  font-size: 24px;
+  color: #950704;
+  margin-bottom: 10px;
+}
+
+.profile-section ul {
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.nav-btn {
+  margin-left: 10px;
+}

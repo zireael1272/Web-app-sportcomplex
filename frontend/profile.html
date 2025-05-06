@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Особистий кабінет | Спортивний центр Phenix</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/profilestyle.css" />
     <script src="js/all.js" defer></script>
   </head>
 
@@ -18,21 +19,38 @@
       </div>
     </header>
 
-    <footer class="footer">
-      <div class="footer-section">
-        <img src="images/phoenix.png" alt="Logo" class="footer-logo" />
-        <div class="footer-info">
-          <p><b>Адреса:</b> м. Київ, вул. Спортивна, 10</p>
-          <p><b>Телефон:</b> +380 (50) 123 45 67</p>
-          <p>
-            <b>Email:</b>
-            <a href="mailto:support@phenixcenter.com"
-              >support@phenixcenter.com</a
-            >
-          </p>
-        </div>
-      </div>
-    </footer>
+    <main class="profile-container">
+      <img class="avatarprofile" src="/images/user.png" alt="Avatar" />
+      <h1>Особистий кабінет</h1>
+
+      <section class="profile-section">
+        <h2>Особисті дані</h2>
+        <p><strong>Ім’я:</strong> Іван</p>
+        <p><strong>Email:</strong> ivan@example.com</p>
+        <p><strong>Телефон:</strong> +380123456789</p>
+      </section>
+
+      <section class="profile-section">
+        <h2>Дійсність абонементу</h2>
+        <p>Активний абонемент: <strong>Фітнес</strong></p>
+        <p>Дійсний до: <strong>31.07.2025</strong></p>
+      </section>
+
+      <section class="profile-section">
+        <h2>Записи на тренування</h2>
+        <ul>
+          <li>10.05.2025 – Фітнес о 18:00</li>
+          <li>12.05.2025 – Бокс о 19:00</li>
+        </ul>
+      </section>
+
+      <section class="profile-section">
+        <h2>Трекінг успіхів</h2>
+        <p>Вага: 75 кг → 70 кг</p>
+        <p>Сила: +15% за 2 місяці</p>
+      </section>
+    </main>
+
     <script src="/js/main.js"></script>
   </body>
 </html>
