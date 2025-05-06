@@ -125,6 +125,19 @@ header {
   border-radius: 50%;
 }
 
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.profile-link:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
 .footer {
   background-color: #4e4e50;
   color: white;
