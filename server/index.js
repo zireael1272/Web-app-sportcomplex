@@ -20,10 +20,10 @@ db.connect(err => {
   else console.log('✅ Підключено до MySQL');
 });
 
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(path.join(__dirname, '..', 'full')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'main.html'));
+  res.sendFile(path.join(__dirname, '..', 'full', 'main.html'));
 });
 
 //Реєстрація
@@ -70,6 +70,13 @@ app.post('/login', (req, res) => {
 
     res.json({ message: 'Успішний вхід', username });
   });
+});
+
+app.post('/userdetails/save', (req, res) => {
+  const { fullName, phoneNumber, email, dateOfBirth } = req.body;
+
+  console.log('User details saved:', fullName, phoneNumber, email, dateOfBirth);
+  res.status(200).json({ message: 'Дані користувача збережено успішно.' });
 });
 
 app.listen(8080, () => {

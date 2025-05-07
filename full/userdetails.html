@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Створення кабінету | Спортивний центр Phenix</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/all.js" defer></script>
+    <script src="js/userdetails.js" defer></script>
+</head>
+
+<body>
+    <form action="/userdetails/save" method="post">
+        <label>Ім’я: <input type="text" name="firstName" required></label><br>
+        <label>Прізвище: <input type="text" name="lastName" required></label><br>
+        <label>По-батькові: <input type="text" name="patronymic" required></label><br>
+        <label>Номер телефону: <input type="text" name="phoneNumber"></label><br>
+        <label>Email: <input type="email" name="email"></label><br>
+        <label>Дата народження: <input type="date" name="dateOfBirth"></label><br>
+        <button type="submit">Зберегти</button>
+    </form>
+</body>
+
+</html>
