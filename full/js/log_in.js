@@ -20,8 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("username", username); // Зберігаємо
-        window.location.href = "main.html"; // Переходимо
+        localStorage.setItem("username", username);
+        window.location.href = "main.html";
       } else {
         errorMsg.textContent = data.message || "Невірний логін або пароль";
       }

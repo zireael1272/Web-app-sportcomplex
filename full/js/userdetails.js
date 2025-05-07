@@ -1,46 +1,51 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('userdetails-form');
-    const errorMsg = document.getElementById('error-message');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("details-form");
+  const errorMsg = document.getElementById("error-message");
 
-    form.addEventListener('submit', async function (e) {
-        e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-        const firstName = document.getElementById("firstName").value.trim();
-        const lastName = document.getElementById("lastName").value.trim();
-        const patronymic = document.getElementById("patronymic").value.trim();
-        const phoneNumber = document.getElementById("phoneNumber").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const dateOfBirth = document.getElementById("dateOfBirth").value;
+    const username = localStorage.getItem("tmpUsername");
+    const password = localStorage.getItem("tmpPassword");
 
-        // Перевірка обов'язкових полів
-        if (!firstName || !lastName || !patronymic || !dateOfBirth) {
-            errorMsg.textContent = "Будь ласка, заповніть ім’я, прізвище та дату народження.";
-            return;
-        }
+    if (!username || !password) {
+      errorMsg.textContent = "Помилка: відсутні логін або пароль.";
+      return;
+    }
 
-        const fullName = `${firstName} ${lastName} ${patronymic}`;
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const patronymic = document.getElementById("patronymic").value.trim();
+    const fullName = `${lastName} ${firstName} ${patronymic}`.trim();
 
-        try {
-            const saveResponse = await fetch('http://localhost:8080/userdetails/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ fullName, phoneNumber, email, dateOfBirth })
-            });
+    const userDetails = {
+      username,
+      password,
+      fullName,
+      phoneNumber: document.getElementById("phoneNumber").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      dateOfBirth: document.getElementById("dateOfBirth").value,
+    };
 
-            const saveData = await saveResponse.json();
+    try {
+      const response = await fetch("http://localhost:8080/register-full", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userDetails),
+      });
 
-            if (saveResponse.ok) {
-                // Успішно збережено
-                console.log(saveData.message);
-                window.location.href = "main.html"; // Перехід на іншу сторінку
-            } else {
-                errorMsg.textContent = saveData.message || "Не вдалося зберегти дані.";
-            }
-        } catch (err) {
-            console.error(err);
-            errorMsg.textContent = "Помилка з’єднання з сервером.";
-        }
-    });
+      const result = await response.json();
+
+      if (response.ok) {
+        localStorage.removeItem("tmpUsername");
+        localStorage.removeItem("tmpPassword");
+        window.location.href = "cabinet.html";
+      } else {
+        errorMsg.textContent = result.message || "Помилка збереження.";
+      }
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = "Помилка з'єднання з сервером.";
+    }
+  });
 });

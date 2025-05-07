@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="uk">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Реєстрація</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
 
-<body>
+  <body>
     <h2>Реєстрація</h2>
     <form id="register-form">
-        <label>Логін:
-            <input type="text" name="username" id="username" required />
-        </label><br>
-        <label>Пароль:
-            <input type="password" name="password" id="password" required />
-        </label><br>
-        <label>Підтвердження пароля:
-            <input type="password" name="confirmPassword" id="confirmPassword" required />
-        </label><br>
-        <button type="submit" class="nav-btn">Зареєструватися</button>
+      <label
+        >Логін:
+        <input type="text" name="username" id="username" required /> </label
+      ><br />
+      <label
+        >Пароль:
+        <input type="password" name="password" id="password" required /> </label
+      ><br />
+      <label
+        >Підтвердження пароля:
+        <input
+          type="password"
+          name="confirmPassword"
+          id="confirmPassword"
+          required
+        /> </label
+      ><br />
+      <button type="submit" class="nav-btn">Далі</button>
     </form>
-    <p id="error-message" style="color: red;"></p>
+    <p id="error-message" style="color: red"></p>
     <script src="js/sign_in.js" defer></script>
-</body>
-
+  </body>
 </html>
