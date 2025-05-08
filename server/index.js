@@ -25,30 +25,24 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "full", "main.html"));
 });
 
-app.post("/register", (req, res) => {
+app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ message: "Введіть логін і пароль." });
+    return res.status(400).json({ message: 'Логін та пароль обов’язкові.' });
   }
 
-  db.query(
-    "SELECT * FROM users WHERE username = ?",
-    [username],
-    (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Помилка БД" });
-      }
+  const query = "INSERT INTO users (username, password) VALUES (?, ?)";
 
-      if (results.length > 0) {
-        return res.status(409).json({ message: "Логін уже зайнято." });
-      }
-
-      res.status(200).json({ message: "Можна продовжувати" });
+  db.query(query, [username, password], (err, result) => {
+    if (err) {
+      return res.status(500).json({ message: 'Помилка під час реєстрації', error: err });
     }
-  );
+
+    res.json({ userId: result.insertId });
+  });
 });
+
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
@@ -69,35 +63,19 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.post("/register-full", async (req, res) => {
-  const { username, password, fullName, phoneNumber, email, dateOfBirth } =
-    req.body;
+app.post("/userdetails", async (req, res) => {
+  const { userId, fullName, phoneNumber, email, dateOfBirth } = req.body;
 
-  if (!username || !password || !fullName || !dateOfBirth) {
+  if (!userId || !fullName || !dateOfBirth) {
     return res.status(400).json({ message: "Обов’язкові поля відсутні." });
   }
 
-  const existing = await db.query("SELECT * FROM users WHERE username = ?", [
-    username,
-  ]);
-  if (existing.length > 0) {
-    return res.status(409).json({ message: "Користувач вже існує." });
-  }
-
-  const userResult = await db.query(
-    "INSERT INTO users (username, password) VALUES (?, ?)",
-    [username, password]
-  );
-  const userId = userResult.insertId;
-
   await db.query(
-    `
-    INSERT INTO userdetails (user_id, full_name, phone_number, email, date_of_birth)
-    VALUES (?, ?, ?, ?, ?)`,
+    "INSERT INTO userdetails (user_id, full_name, phone, email, birth_date) VALUES (?, ?, ?, ?, ?)",
     [userId, fullName, phoneNumber, email, dateOfBirth]
   );
 
-  res.json({ message: "Користувач створений успішно." });
+  res.json({ message: "Дані успішно збережено" });
 });
 
 app.listen(8080, () => {

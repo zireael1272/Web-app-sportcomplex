@@ -5,11 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = localStorage.getItem("tmpUsername");
-    const password = localStorage.getItem("tmpPassword");
-
-    if (!username || !password) {
-      errorMsg.textContent = "Помилка: відсутні логін або пароль.";
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      errorMsg.textContent = "Помилка: не знайдено ID користувача.";
       return;
     }
 
@@ -19,16 +17,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const fullName = `${lastName} ${firstName} ${patronymic}`.trim();
 
     const userDetails = {
-      username,
-      password,
+      userId,
       fullName,
       phoneNumber: document.getElementById("phoneNumber").value.trim(),
       email: document.getElementById("email").value.trim(),
-      dateOfBirth: document.getElementById("dateOfBirth").value,
+      dateOfBirth: document.getElementById("dateOfBirth").value
     };
 
     try {
-      const response = await fetch("http://localhost:8080/register-full", {
+      const response = await fetch("/userdetails", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userDetails),
@@ -37,9 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
-        localStorage.removeItem("tmpUsername");
-        localStorage.removeItem("tmpPassword");
-        window.location.href = "cabinet.html";
+        localStorage.removeItem("userId");
+        window.location.href = "main.html";
       } else {
         errorMsg.textContent = result.message || "Помилка збереження.";
       }

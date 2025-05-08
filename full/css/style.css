@@ -37,21 +37,6 @@ header {
   color: #c3073f;
 }
 
-.container {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  flex-wrap: wrap;
-}
-
-.block {
-  flex: 1 1 300px;
-  background-color: lightblue;
-  padding: 20px;
-  min-width: 250px;
-  box-sizing: border-box;
-}
-
 .subscriptions {
   max-width: 1400px;
   margin: 0 auto;

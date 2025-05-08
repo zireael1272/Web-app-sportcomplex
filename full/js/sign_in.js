@@ -1,40 +1,31 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("register-form");
-  const errorMsg = document.getElementById("error-message");
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = e.target.username.value;
+  const password = e.target.password.value;
+  const confirmPassword = e.target.confirmPassword.value;
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  console.log('Дані реєстрації:', { username, password, confirmPassword });
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const confirmPassword = document
-      .getElementById("confirmPassword")
-      .value.trim();
+  if (password !== confirmPassword) {
+    return document.getElementById('error-message').textContent = 'Паролі не співпадають';
+  }
 
-    if (password !== confirmPassword) {
-      errorMsg.textContent = "Паролі не співпадають.";
-      return;
+  try {
+    const res = await fetch('/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem('userId', result.userId);
+      window.location.href = '/userdetails.html';
+    } else {
+      document.getElementById('error-message').textContent = result.message || 'Помилка реєстрації';
     }
-
-    try {
-      const regResponse = await fetch("http://localhost:8080/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const regData = await regResponse.json();
-
-      if (regResponse.ok) {
-        localStorage.setItem("tmpUsername", username);
-        localStorage.setItem("tmpPassword", password);
-        window.location.href = "userdetails.html";
-      } else {
-        errorMsg.textContent = regData.message || "Помилка реєстрації.";
-      }
-    } catch (err) {
-      console.error(err);
-      errorMsg.textContent = "Помилка з’єднання з сервером.";
-    }
-  });
+  } catch (error) {
+    document.getElementById('error-message').textContent = 'Помилка з’єднання з сервером.';
+  }
 });
