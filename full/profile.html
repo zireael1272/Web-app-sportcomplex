@@ -19,32 +19,27 @@
       </div>
     </header>
 
-    <main class="profile-container">
-      <h1>Особистий кабінет</h1>
-      <img class="avatarprofile" src="/images/user.png" alt="Avatar" />
-      <section class="profile-section">
-        <h2>Особисті дані</h2>
-        <p><strong>ПІБ:</strong> </p>
-        <p><strong>Email:</strong> </p>
-        <p><strong>Телефон:</strong> </p>
-      </section>
+    <div class="profile-container">
+      <div class="left-block">
+        <div class="user-info">
+          <img src="/images/user.png" alt="Avatar" />
+          <div class="user-info-details">
+            <p><strong>Ім’я:</strong> Іван</p>
+            <p><strong>Email:</strong> ivan@example.com</p>
+            <p><strong>Телефон:</strong> +380123456789</p>
+          </div>
+        </div>
 
-      <section class="profile-section">
-        <h2>Дійсність абонементу</h2>
-        <p>Активний абонемент: <strong></strong></p>
-        <p>Дійсний до: <strong></strong></p>
-      </section>
+        <div class="subscription-block">
+          <h3>Абонемент</h3>
+          <p>Тренажерний зал – дійсний до 30.06.2025</p>
+        </div>
+      </div>
 
-      <section class="profile-section">
-        <h2>Записи на тренування</h2>
-        <ul>
-        </ul>
-      </section>
-
-      <section class="profile-section">
-        <h2>Трекінг успіхів</h2>
-    </main>
-
-    <script src="/js/main.js"></script>
+      <div class="calendar-block">
+        <h3>Мої записи</h3>
+        <!-- Тут буде календар -->
+      </div>
+    </div>
   </body>
 </html>
