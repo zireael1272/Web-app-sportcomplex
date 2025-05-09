@@ -39,9 +39,35 @@
 }
 
 .calendar-block {
-  width: 35%;
+  width: 30%;
   background-color: #1a1a1d;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.calendar-day {
+  background-color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.calendar-day:hover {
+  background-color: #555;
+}
+
+#record-info {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ffcc00;
 }

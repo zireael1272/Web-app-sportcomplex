@@ -16,7 +16,7 @@ function generateCalendar(date) {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const bookedFitness = [6, 11, 15, 20, 24];
+    const bookedFitness = [11, 15, 20, 24];
     const bookedBoxing = [10, 12, 19, 22, 28];
 
     const startOffset = firstDay === 0 ? 6 : firstDay - 1;
@@ -30,27 +30,32 @@ function generateCalendar(date) {
 
     for (let day = 1; day <= daysInMonth; day++) {
         const fullDate = new Date(year, month, day);
-        const dateStr = fullDate.toISOString().split("T")[0];
+        const dateStr = fullDate.toLocaleDateString('en-CA'); 
 
         const div = document.createElement("div");
         div.classList.add("day");
 
+        let type = "";
         if (bookedFitness.includes(day)) {
             div.classList.add("fitness");
+            type = "fitness";
         } else if (bookedBoxing.includes(day)) {
             div.classList.add("boxing");
+            type = "boxing";
         }
 
         div.textContent = day;
 
-        div.addEventListener("click", () => {
-            const username = localStorage.getItem("username");
-            if (username) {
-                window.location.href = `booking.html?date=${dateStr}`;
-            } else {
-                window.location.href = "register.html";
-            }
-        });
+        if (type) {
+            div.addEventListener("click", () => {
+                const username = localStorage.getItem("username");
+                if (username) {
+                    window.location.href = `booking.html?date=${dateStr}&type=${type}`;
+                } else {
+                    window.location.href = "register.html";
+                }
+            });
+        }
 
         daysContainer.appendChild(div);
     }

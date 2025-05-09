@@ -1,0 +1,78 @@
+.booking-container {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: #1a1a1d;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+#booking-info {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    border: 1px solid #1a1a1d;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+form button {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #6f2232;
+    color: white;
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #c3073f;
+}
+
+.message {
+    margin-top: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.info {
+    margin-bottom: 20px;
+}
+
+.time-slot {
+    padding: 10px 15px;
+    margin: 5px;
+    background-color: #eee;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-block;
+    transition: background 0.2s;
+}
+
+.time-slot:hover {
+    background-color: #ccc;
+}
+
+.no-slots {
+    color: red;
+}
