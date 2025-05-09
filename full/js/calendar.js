@@ -16,7 +16,7 @@ function generateCalendar(date) {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const bookedFitness = [11, 15, 20, 24];
+    const bookedFitness = [6, 11, 15, 20, 24];
     const bookedBoxing = [10, 12, 19, 22, 28];
 
     const startOffset = firstDay === 0 ? 6 : firstDay - 1;
@@ -30,7 +30,7 @@ function generateCalendar(date) {
 
     for (let day = 1; day <= daysInMonth; day++) {
         const fullDate = new Date(year, month, day);
-        const dateStr = fullDate.toLocaleDateString('en-CA'); 
+        const dateStr = fullDate.toLocaleDateString('en-CA'); // YYYY-MM-DD без UTC зсуву
 
         const div = document.createElement("div");
         div.classList.add("day");
@@ -49,12 +49,21 @@ function generateCalendar(date) {
         if (type) {
             div.addEventListener("click", () => {
                 const username = localStorage.getItem("username");
-                if (username) {
+
+                let type = '';
+                if (div.classList.contains('fitness')) {
+                    type = 'fitness';
+                } else if (div.classList.contains('boxing')) {
+                    type = 'boxing';
+                }
+
+                if (username && type) {
                     window.location.href = `booking.html?date=${dateStr}&type=${type}`;
-                } else {
+                } else if (!username) {
                     window.location.href = "register.html";
                 }
             });
+
         }
 
         daysContainer.appendChild(div);

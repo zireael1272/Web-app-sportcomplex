@@ -1,48 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const date = urlParams.get('date');
-    const type = urlParams.get('type');
-  
-    document.getElementById('date').textContent = date;
-    document.getElementById('type').textContent = type === 'fitness' ? 'Фітнес' : 'Бокс';
-  
-    // Дані про доступні години (реально доступні лише на певні дні)
+    const dateParam = urlParams.get("date");
+    const typeParam = urlParams.get("type");
+
+    const dateInput = document.getElementById("appointment-date");
+    const typeSelect = document.getElementById("activity-type");
+    const timeSelect = document.getElementById("appointment-time");
+
     const availableTimes = {
-      fitness: {
-        '2025-05-06': ['10:00', '12:00'],
-        '2025-05-11': ['12:00'],
-        '2025-05-15': ['10:00', '13:00'],
-        '2025-05-20': ['09:00', '12:00', '15:00'],
-        '2025-05-24': ['11:00']
-      },
-      boxing: {
-        '2025-05-10': ['10:00'],
-        '2025-05-12': ['12:00', '14:00'],
-        '2025-05-19': ['11:00'],
-        '2025-05-22': ['09:00', '13:00'],
-        '2025-05-28': ['12:00']
-      }
+        fitness: ["10:00", "12:00", "14:00"],
+        boxing: ["11:00", "13:00", "15:00"],
     };
-  
-    const timeContainer = document.getElementById('time-container');
-    const times = availableTimes[type]?.[date];
-  
-    if (times && times.length > 0) {
-      times.forEach(time => {
-        const div = document.createElement('div');
-        div.classList.add('time-slot');
-        div.textContent = time;
-        div.addEventListener('click', () => {
-          alert(`Ви записані на ${type === 'fitness' ? 'фітнес' : 'бокс'} ${date} о ${time}`);
-          // Тут можна додати логіку збереження у базу
-        });
-        timeContainer.appendChild(div);
-      });
-    } else {
-      const noSlots = document.createElement('p');
-      noSlots.classList.add('no-slots');
-      noSlots.textContent = 'Немає доступних записів на цей день.';
-      timeContainer.appendChild(noSlots);
+
+    // Підставити дату, якщо є в URL
+    if (dateParam) {
+        dateInput.value = dateParam;
     }
-  });
-  
+
+    // Підставити тип заняття, якщо є в URL
+    if (typeParam) {
+        const value = typeParam.toLowerCase();
+        typeSelect.value = value === "fitness" ? "Фітнес" : "Бокс";
+        typeSelect.disabled = false;
+
+        // Створити варіанти часу
+        const times = value === "fitness" ? availableTimes.fitness : availableTimes.boxing;
+
+        timeSelect.innerHTML = '<option value="">Оберіть час</option>';
+        times.forEach(time => {
+            const option = document.createElement("option");
+            option.value = time;
+            option.textContent = time;
+            timeSelect.appendChild(option);
+        });
+
+        timeSelect.disabled = false;
+    } else {
+        typeSelect.disabled = true;
+        timeSelect.disabled = true;
+    }
+});
