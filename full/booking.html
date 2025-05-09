@@ -1,74 +1,79 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Головна | Спортивний центр Phenix</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/booking.css" />
+    <script src="js/all.js" defer></script>
+    <script src="js/booking.js" defer></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Головна | Спортивний центр Phenix</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/booking.css" />
-  <script src="js/all.js" defer></script>
-  <script src="js/booking.js" defer></script>
-</head>
-
-<body>
-  <header>
-    <div class="header-content">
-      <div class="nav-left">
-        <button class="nav-btn" onclick="history.back()">← Назад</button>
-      </div>
-      <a href="main.html" class="center-title">Phenix</a>
-      <div class="nav-container">
-        <div class="guest">
-          <a href="login.html" class="nav-btn">Увійти</a>
-          <a href="register.html" class="nav-btn">Зареєструватися</a>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="nav-left">
+          <button class="nav-btn" onclick="history.back()">← Назад</button>
         </div>
-        <div class="user" style="display: none">
-          <a href="profile.html" class="profile-link">
-            <img class="avatar" src="/images/user.png" alt="Avatar" />
-            <span class="username">Username</span>
-          </a>
-          <a href="#" id="logout-btn" class="nav-btn">Вийти</a>
+        <a href="main.html" class="center-title">Phenix</a>
+        <div class="nav-container">
+          <div class="guest">
+            <a href="login.html" class="nav-btn">Увійти</a>
+            <a href="register.html" class="nav-btn">Зареєструватися</a>
+          </div>
+          <div class="user" style="display: none">
+            <a href="profile.html" class="profile-link">
+              <img class="avatar" src="/images/user.png" alt="Avatar" />
+              <span class="username">Username</span>
+            </a>
+            <a href="#" id="logout-btn" class="nav-btn">Вийти</a>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main class="booking-container">
-    <h2>Запис на заняття</h2>
-    <form id="booking-form">
- 
-      <label for="appointment-date">Дата:</label>
-      <input type="date" id="appointment-date" name="date" required readonly />
-  
-      <label for="appointment-time">Час:</label>
-      <select id="appointment-time" name="time" required>
-        <option value="">Оберіть час</option>
-      </select>
-  
-      <label for="activity-type">Тип заняття:</label>
-      <select id="activity-type" name="activity" required disabled>
-        <option value="Фітнес">Фітнес</option>
-        <option value="Бокс">Бокс</option>
-      </select>
-  
-      <button type="submit">Підтвердити запис</button>
-      <p id="booking-message" class="message"></p>
-    </form>
-  </main>
+    <main class="booking-container">
+      <h2>Запис на заняття</h2>
+      <form id="booking-form">
+        <label for="appointment-date">Дата:</label>
+        <input
+          type="date"
+          id="appointment-date"
+          name="date"
+          required
+          readonly
+        />
 
-  <footer class="footer">
-    <div class="footer-section">
-      <img src="images/phoenix.png" alt="Logo" class="footer-logo" />
-      <div class="footer-info">
-        <p><b>Адреса:</b> м. Київ, вул. Спортивна, 10</p>
-        <p><b>Телефон:</b> +380 (50) 123 45 67</p>
-        <p>
-          <b>Email:</b>
-          <a href="mailto:support@phenixcenter.com">support@phenixcenter.com</a>
-        </p>
+        <label for="appointment-time">Час:</label>
+        <select id="appointment-time" name="time" required>
+          <option value="">Оберіть час</option>
+        </select>
+
+        <label for="activity-type">Тип заняття:</label>
+        <select id="activity-type" name="activity" required>
+          <option value="Фітнес">Фітнес</option>
+          <option value="Бокс">Бокс</option>
+        </select>
+
+        <button type="submit">Підтвердити запис</button>
+        <p id="booking-message" class="message"></p>
+      </form>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-section">
+        <img src="images/phoenix.png" alt="Logo" class="footer-logo" />
+        <div class="footer-info">
+          <p><b>Адреса:</b> м. Київ, вул. Спортивна, 10</p>
+          <p><b>Телефон:</b> +380 (50) 123 45 67</p>
+          <p>
+            <b>Email:</b>
+            <a href="mailto:support@phenixcenter.com"
+              >support@phenixcenter.com</a
+            >
+          </p>
+        </div>
       </div>
-    </div>
-  </footer>
-</body>
-
+    </footer>
+  </body>
 </html>
