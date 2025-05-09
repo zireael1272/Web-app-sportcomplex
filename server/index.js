@@ -103,6 +103,26 @@ app.post("/booking", (req, res) => {
     res.json({ message: "Запис збережено успішно!" });
   });
 });
+
+app.post("/records", (req, res) => {
+  const userId = req.body.userId;
+
+  if (!userId) {
+    return res.status(400).json({ message: "userId обов'язковий" });
+  }
+
+  const query =
+    "SELECT records_date, records_time, activity_type FROM records WHERE user_id = ?";
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("DB error:", err);
+      return res.status(500).json({ message: "Помилка бази даних" });
+    }
+
+    res.json(results);
+  });
+});
+
 app.listen(8080, () => {
   console.log("Сервер запущено на http://localhost:8080");
 });
