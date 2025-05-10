@@ -123,6 +123,39 @@ app.post("/records", (req, res) => {
   });
 });
 
+app.post("/userdetails", (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: "userId обов'язковий" });
+  }
+
+  const query =
+    "SELECT full_name, email, phone, birth_date  FROM userdetails WHERE user_id = ?";
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("DB error:", err);
+      return res.status(500).json({ message: "Помилка бази даних" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Користувача не знайдено" });
+    }
+
+    // Обчислюємо вік
+    const birthDate = new Date(results[0].birth_date);
+    const age = new Date().getFullYear() - birthDate.getFullYear();
+
+    res.json({
+      fullName: results[0].full_name,
+      age: age,
+      phone: results[0].phone || null,
+      email: results[0].email || null,
+    });
+  });
+});
+
 app.listen(8080, () => {
   console.log("Сервер запущено на http://localhost:8080");
 });
