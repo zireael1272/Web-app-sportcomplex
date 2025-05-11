@@ -16,33 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `records`
+-- Table structure for table `subscriptions`
 --
 
-DROP TABLE IF EXISTS `records`;
+DROP TABLE IF EXISTS `subscriptions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `records` (
+CREATE TABLE `subscriptions` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `records_date` date NOT NULL,
-  `records_time` time NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `activity_type` varchar(50) DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `duration` int DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
+  `purchase_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `subscriptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `records`
+-- Dumping data for table `subscriptions`
 --
 
-LOCK TABLES `records` WRITE;
-/*!40000 ALTER TABLE `records` DISABLE KEYS */;
-INSERT INTO `records` VALUES (1,1,'2025-05-15','12:00:00','2025-05-09 20:28:21','Фітнес');
-/*!40000 ALTER TABLE `records` ENABLE KEYS */;
+LOCK TABLES `subscriptions` WRITE;
+/*!40000 ALTER TABLE `subscriptions` DISABLE KEYS */;
+INSERT INTO `subscriptions` VALUES (1,1,'gym',1,800.00,'2025-05-11 22:24:26');
+/*!40000 ALTER TABLE `subscriptions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

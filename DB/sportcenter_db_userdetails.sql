@@ -43,7 +43,7 @@ CREATE TABLE `userdetails` (
 
 LOCK TABLES `userdetails` WRITE;
 /*!40000 ALTER TABLE `userdetails` DISABLE KEYS */;
-INSERT INTO `userdetails` VALUES (1,1,'Гончаренко Ксенія Сергіївна','kseniiahoncharenko@gmail.com','0123456789','2002-02-20',NULL);
+INSERT INTO `userdetails` VALUES (1,1,'Гончаренко Ксенія Сергіївна','kseniiahoncharenko@gmail.com','0123456789','2005-02-02',NULL);
 /*!40000 ALTER TABLE `userdetails` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-10 17:13:27
+-- Dump completed on 2025-05-11 23:25:24
