@@ -83,6 +83,81 @@ app.post("/userdetails", async (req, res) => {
   res.json({ message: "Дані успішно збережено" });
 });
 
+app.post("/get_user_id", (req, res) => {
+  const { username } = req.body;
+
+  if (!username) {
+    return res.status(400).json({ message: "Username обов’язковий" });
+  }
+
+  db.query(
+    "SELECT id FROM users WHERE username = ?",
+    [username],
+    (err, results) => {
+      if (err) {
+        console.error("DB error:", err);
+        return res.status(500).json({ message: "Помилка сервера" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Користувача не знайдено" });
+      }
+
+      res.json({ userId: results[0].id });
+    }
+  );
+});
+
+app.post("/purchase", (req, res) => {
+  const { user_id, type, duration, price } = req.body;
+
+  if (!user_id || !type || !duration || !price) {
+    return res.status(400).json({ message: "Недостатньо даних для покупки." });
+  }
+
+  const purchaseDate = new Date();
+
+  // Вставка в базу данных
+  const query =
+    "INSERT INTO subscriptions (user_id, type, duration, price, purchase_date) VALUES (?, ?, ?, ?, ?)";
+  const values = [user_id, type, duration, price, purchaseDate];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error("Помилка при додаванні підписки: " + err.stack);
+      return res
+        .status(500)
+        .json({ message: "Помилка при додаванні підписки." });
+    }
+
+    // Отправляем ответ об успешной добавлении
+    res.status(200).json({ message: "Абонемент успішно активовано." });
+  });
+});
+
+app.post("/subscriptions", (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "userId обов'язковий" });
+  }
+
+  console.log(`Запит на отримання абонементів для користувача: ${userId}`);
+
+  const query = "SELECT * FROM subscriptions WHERE user_id = ?";
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("DB error:", err);
+      return res
+        .status(500)
+        .json({ error: "Помилка при отриманні абонементів" });
+    }
+
+    console.log("Отримано абонементи:", results);
+    res.json(results);
+  });
+});
+
 app.post("/booking", (req, res) => {
   const { userId, date, time, activity } = req.body;
 
@@ -123,36 +198,30 @@ app.post("/records", (req, res) => {
   });
 });
 
-app.post("/userdetails", (req, res) => {
+app.post("/profile_data", (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
-    return res.status(400).json({ message: "userId обов'язковий" });
+    return res.status(400).json({ message: "Обов’язкові поля відсутні." });
   }
 
-  const query =
-    "SELECT full_name, email, phone, birth_date  FROM userdetails WHERE user_id = ?";
+  const query = `
+    SELECT full_name, phone, email, birth_date 
+    FROM userdetails 
+    WHERE user_id = ?
+  `;
 
   db.query(query, [userId], (err, results) => {
     if (err) {
       console.error("DB error:", err);
-      return res.status(500).json({ message: "Помилка бази даних" });
+      return res.status(500).json({ message: "Помилка сервера" });
     }
 
     if (results.length === 0) {
       return res.status(404).json({ message: "Користувача не знайдено" });
     }
 
-    // Обчислюємо вік
-    const birthDate = new Date(results[0].birth_date);
-    const age = new Date().getFullYear() - birthDate.getFullYear();
-
-    res.json({
-      fullName: results[0].full_name,
-      age: age,
-      phone: results[0].phone || null,
-      email: results[0].email || null,
-    });
+    res.json(results[0]);
   });
 });
 

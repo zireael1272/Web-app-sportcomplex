@@ -1,38 +1,95 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const fullNameEl = document.getElementById("full-name");
-  const ageEl = document.getElementById("age");
-  const phoneEl = document.getElementById("phone");
-  const emailEl = document.getElementById("email");
+  const username = localStorage.getItem("username");
 
-  const userId = localStorage.getItem("userId");
-
-  if (!userId) {
-    fullNameEl.textContent = "Помилка: не знайдено ID користувача";
+  if (!username) {
+    window.location.href = "login.html"; // якщо не залогінений
     return;
   }
 
   try {
-    const response = await fetch("/userdetails", {
+    // 1️⃣ Отримуємо user_id по username
+    const userResponse = await fetch("/get_user_id", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId: userId }),
+      body: JSON.stringify({ username }),
     });
 
-    if (!response.ok) throw new Error("Сервер повернув помилку");
+    const userData = await userResponse.json();
+    const userId = userData.userId;
 
-    const userDetails = await response.json();
+    if (!userId) {
+      throw new Error("Не знайдено userId");
+    }
 
-    // Заповнюємо елементи на сторінці даними користувача
-    fullNameEl.textContent = `ФІО: ${userDetails.fullName}`;
-    ageEl.textContent = `Вік: ${userDetails.age}`;
-    phoneEl.textContent = `Телефон: ${userDetails.phone || "Не вказано"}`;
-    emailEl.textContent = `Електронна пошта: ${
-      userDetails.email || "Не вказано"
-    }`;
+    // 2️⃣ Отримуємо деталі профілю з БД
+    const profileResponse = await fetch("/profile_data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    const profile = await profileResponse.json();
+
+    // 3️⃣ Вставляємо у DOM
+    document.getElementById("full-name").textContent = profile.full_name || "";
+    document.getElementById("phone").textContent = profile.phone || "";
+    document.getElementById("email").textContent = profile.email || "";
+    const birthDateRaw = profile.birth_date;
+    if (birthDateRaw) {
+      const birthDate = new Date(birthDateRaw);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+      document.getElementById("birth-date").textContent = `${age} років`;
+    }
+
+    // 4️⃣ Отримуємо абонементи користувача
+    try {
+      const subsResponse = await fetch("/subscriptions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      if (!subsResponse.ok) {
+        throw new Error("Помилка при отриманні абонементів");
+      }
+
+      const subscriptions = await subsResponse.json();
+      console.log("Отримані абонементи:", subscriptions);
+
+      const subscriptionBlock = document.querySelector(".subscription-block");
+      subscriptionBlock.innerHTML = "<h3>Абонемент</h3>";
+
+      if (subscriptions.length === 0) {
+        subscriptionBlock.innerHTML +=
+          "<p>У вас немає активних абонементів.</p>";
+      } else {
+        subscriptions.forEach((sub) => {
+          const purchaseDate = new Date(sub.purchase_date);
+          const endDate = new Date(purchaseDate);
+          endDate.setMonth(endDate.getMonth() + sub.duration);
+          const formattedEnd = endDate.toISOString().split("T")[0];
+
+          subscriptionBlock.innerHTML += `
+            <p>${sub.type} — дійсний до ${formattedEnd} (${sub.price} грн)</p>
+          `;
+        });
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
   } catch (err) {
-    console.error("Помилка при отриманні даних профілю:", err);
-    fullNameEl.textContent = "Не вдалося завантажити дані профілю";
+    console.error("Fetch error:", err);
   }
 });
