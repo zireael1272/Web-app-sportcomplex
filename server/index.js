@@ -117,7 +117,6 @@ app.post("/purchase", (req, res) => {
 
   const purchaseDate = new Date();
 
-  // Вставка в базу данных
   const query =
     "INSERT INTO subscriptions (user_id, type, duration, price, purchase_date) VALUES (?, ?, ?, ?, ?)";
   const values = [user_id, type, duration, price, purchaseDate];
@@ -222,6 +221,27 @@ app.post("/profile_data", (req, res) => {
     }
 
     res.json(results[0]);
+  });
+});
+
+app.post("/user-subscriptions", (req, res) => {
+  const { userId } = req.body;
+  console.log("Запит на отримання абонементів для userId:", userId);
+
+  if (!userId) {
+    console.error("userId не передано");
+    return res.status(400).json({ error: "userId обов'язковий" });
+  }
+
+  const query = `SELECT type, duration, price, purchase_date FROM subscriptions WHERE user_id = ?`;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Помилка при запиті до БД:", err.message);
+      return res.status(500).json({ error: "Помилка сервера" });
+    }
+    console.log("Отримано абонементи:", results);
+    res.json(results);
   });
 });
 

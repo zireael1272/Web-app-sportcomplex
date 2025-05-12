@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const username = localStorage.getItem("username");
 
   if (!username) {
-    window.location.href = "login.html"; // якщо не залогінений
+    window.location.href = "login.html";
     return;
   }
 
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 4️⃣ Отримуємо абонементи користувача
     try {
-      const subsResponse = await fetch("/subscriptions", {
+      const subsResponse = await fetch("/user-subscriptions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,26 +66,44 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const subscriptions = await subsResponse.json();
-      console.log("Отримані абонементи:", subscriptions);
-
       const subscriptionBlock = document.querySelector(".subscription-block");
-      subscriptionBlock.innerHTML = "<h3>Абонемент</h3>";
 
       if (subscriptions.length === 0) {
-        subscriptionBlock.innerHTML +=
-          "<p>У вас немає активних абонементів.</p>";
-      } else {
-        subscriptions.forEach((sub) => {
-          const purchaseDate = new Date(sub.purchase_date);
-          const endDate = new Date(purchaseDate);
-          endDate.setMonth(endDate.getMonth() + sub.duration);
-          const formattedEnd = endDate.toISOString().split("T")[0];
+    subscriptionBlock.innerHTML += "<p>У вас немає активних абонементів.</p>";
+  } else {
+    subscriptions.forEach((sub) => {
+      const purchaseDate = new Date(sub.purchase_date);
+      const endDate = new Date(purchaseDate);
 
-          subscriptionBlock.innerHTML += `
-            <p>${sub.type} — дійсний до ${formattedEnd} (${sub.price} грн)</p>
-          `;
-        });
+      let displayText = "";
+      
+      // Переводимо тип абонемента на українську
+      let subscriptionType;
+      switch (sub.type) {
+        case "gym":
+          subscriptionType = "Тренажерний зал";
+          endDate.setDate(endDate.getDate() + sub.duration);
+          displayText = `Дійсний до ${endDate.toISOString().split("T")[0]}`;
+          break;
+        case "fitness":
+          subscriptionType = "Фітнес";
+          displayText = `${sub.duration} занять залишилося`;
+          break;
+        case "boxing":
+          subscriptionType = "Бокс";
+          displayText = `${sub.duration} занять залишилося`;
+          break;
+        default:
+          subscriptionType = sub.type;
+          displayText = "Неизвестный тип абонемента";
       }
+
+      subscriptionBlock.innerHTML += `
+        <p>${subscriptionType} — ${displayText}</p>
+      `;
+    });
+  }
+
     } catch (err) {
       console.error("Fetch error:", err);
     }
