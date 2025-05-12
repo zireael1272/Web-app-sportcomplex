@@ -2,7 +2,6 @@
     display: flex;
     justify-content: center;
     margin-top: 40px;
-    padding: 0 10px;
 }
 
 .two-columns {
@@ -13,9 +12,9 @@
 }
 
 .schedule {
-    flex: 0 0 250px;
+    flex: 0 0 350px;
+    min-width: 250px;
     background-color: #1a1a1d;
-    color: #fff;
     padding: 20px 30px;
     border-radius: 12px;
     text-align: center;
@@ -46,7 +45,6 @@
     border-bottom: none;
 }
 
-/* Блок абонементів */
 .subscriptions {
     flex: 2;
     text-align: center;
@@ -86,3 +84,4 @@
     background-color: #6f2232;
     transform: scale(1.05);
 }
+

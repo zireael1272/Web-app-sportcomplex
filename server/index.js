@@ -189,7 +189,7 @@ app.post("/booking", (req, res) => {
 
         const insertRecordQuery =
           "INSERT INTO records (user_id, records_date, records_time, activity_type) VALUES (?, ?, ?, ?)";
-        
+
         db.query(insertRecordQuery, [userId, date, time, activity], (errInsert, insertResult) => {
           if (errInsert) {
             console.error("Помилка при записі:", errInsert);
@@ -270,70 +270,37 @@ app.post("/user-subscriptions", (req, res) => {
   });
 });
 
-app.post("/user-progress", (req, res) => {
+app.post("/progress-add", async (req, res) => {
+  const { userId, weight } = req.body;
+
+  if (!userId || isNaN(weight)) {
+    return res.status(400).json({ error: "Некоректні дані" });
+  }
+
+  try {
+    await db.query(
+      "INSERT INTO progress (user_id, weight) VALUES (?, ?)",
+      [userId, weight]
+    );
+    res.status(200).json({ message: "Прогрес додано" });
+  } catch (err) {
+    console.error("DB error:", err);
+    res.status(500).json({ error: "Помилка збереження прогресу" });
+  }
+});
+
+app.post("/progress", (req, res) => {
   const { userId } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ message: "UserId is required" });
-  }
+  if (!userId) return res.status(400).json({ message: "userId обов’язковий" });
 
-  const query = "SELECT weight, visits FROM progress WHERE user_id = ?";
-
-  db.query(query, [userId], (err, result) => {
-    if (err) {
-      console.error("Ошибка при получении данных о прогрессе:", err);
-      return res.status(500).json({ message: "Ошибка при получении данных о прогрессе." });
-    }
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "Данные о прогрессе не найдены." });
-    }
-
-    res.json(result[0]);
+  const query = "SELECT weight, visits, record_date FROM progress WHERE user_id = ? ORDER BY record_date DESC";
+  db.query(query, [userId], (err, results) => {
+    if (err) return res.status(500).json({ message: "DB error" });
+    res.json(results);
   });
 });
 
-app.post("/update-progress", (req, res) => {
-  const { userId, newWeight } = req.body;
-
-  if (!userId || !newWeight) {
-    return res.status(400).json({ message: "Поля обязательны." });
-  }
-
-  // Проверим, существует ли запись прогресса для этого пользователя
-  const checkProgressQuery = "SELECT id FROM progress WHERE user_id = ?";
-  db.query(checkProgressQuery, [userId], (err, result) => {
-    if (err) {
-      console.error("Ошибка при проверке прогресса:", err);
-      return res.status(500).json({ message: "Ошибка при проверке прогресса." });
-    }
-
-    if (result.length > 0) {
-      // Обновляем запись прогресса
-      const updateProgressQuery = "UPDATE progress SET weight = ? WHERE user_id = ?";
-      db.query(updateProgressQuery, [newWeight, userId], (errUpdate, updateResult) => {
-        if (errUpdate) {
-          console.error("Ошибка при обновлении прогресса:", errUpdate);
-          return res.status(500).json({ message: "Ошибка при обновлении прогресса." });
-        }
-
-        res.json({ message: "Данные о прогрессе успешно обновлены." });
-      });
-    } else {
-      // Если записи нет, создаем новую
-      const insertProgressQuery =
-        "INSERT INTO progress (user_id, weight) VALUES (?, ?)";
-      db.query(insertProgressQuery, [userId, newWeight], (errInsert, insertResult) => {
-        if (errInsert) {
-          console.error("Ошибка при добавлении прогресса:", errInsert);
-          return res.status(500).json({ message: "Ошибка при добавлении прогресса." });
-        }
-
-        res.json({ message: "Прогресс успешно добавлен." });
-      });
-    }
-  });
-});
 
 
 app.listen(8080, () => {

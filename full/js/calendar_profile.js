@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const calendarEl = document.getElementById("calendar");
   const recordInfo = document.getElementById("record-info");
-  const userId = localStorage.getItem("userId"); // Получаем userId из localStorage
+  const userId = localStorage.getItem("userId");
 
   if (!userId) {
     recordInfo.textContent = "Помилка: не знайдено ID користувача";
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId }), // Отправляем userId в теле запроса
+      body: JSON.stringify({ userId }), 
     });
 
     if (!response.ok) throw new Error("Сервер повернув помилку");
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const records = await response.json();
 
     records.forEach((rec) => {
-      const date = rec.records_date.split("T")[0]; // Обрезаем время
+      const date = rec.records_date.split("T")[0];
       recordsMap[date] = `${rec.records_time} – ${rec.activity_type}`;
     });
   } catch (err) {
@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth(); // 0-11
+  const month = today.getMonth(); 
 
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const daysInMonth = lastDay.getDate();
-  const startDay = firstDay.getDay(); // 0-6, неділя = 0
+  const startDay = firstDay.getDay(); 
 
   const monthNames = [
     "Січень",
@@ -69,13 +69,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     calendarEl.appendChild(dayEl);
   });
 
-  // Порожні клітинки до першого дня місяця
   for (let i = 0; i < (startDay === 0 ? 6 : startDay - 1); i++) {
     const emptyCell = document.createElement("div");
     calendarEl.appendChild(emptyCell);
   }
 
-  // Дні місяця
   for (let i = 1; i <= daysInMonth; i++) {
     const date = new Date(year, month, i);
     const isoDate = date.toISOString().split("T")[0];

@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/profilestyle.css" />
   <script src="js/profile.js" defer></script>
   <script src="js/calendar_profile.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -38,29 +39,29 @@
       </div>
 
       <div class="progress-block">
-        <h3>Мій прогрес</h3>
-        <div id="progress-info">
-          <p><strong>Ваш поточний вага: </strong><span id="current-weight"></span> кг</p>
-          <p><strong>Кількість відвіданих тренувань: </strong><span id="training-visits">0</span></p>
+        <h2>Трекінг успіхів</h2>
+        <div class="progress-form">
+          <h3>Додати прогрес</h3>
+          <form id="add-progress-form">
+            <label for="weight">Вага (кг):</label>
+            <input type="number" id="weight" name="weight" step="0.1" required />
+
+            <button type="submit">Зберегти</button>
+          </form>
+          <div id="progress-list"></div>
+          <canvas id="progressChart" width="400" height="200"></canvas>
         </div>
-        <button id="edit-progress-btn" class="nav-btn">Редагувати</button>
-        <div id="edit-progress-form" style="display: none;">
-          <input type="number" id="new-weight" placeholder="Новий вага" step="0.1" />
-          <button id="save-progress-btn">Зберегти</button>
-        </div>
+
       </div>
-
     </div>
-
     <div class="calendar-block">
-      <h3>Мої записи</h3>
-      <div id="calendar-header">
-        <h3><span id="month-year"></span></h3>
+        <h3>Мої записи</h3>
+        <div id="calendar-header">
+          <h3><span id="month-year"></span></h3>
+        </div>
+        <div id="calendar"></div>
+        <div id="record-info"></div>
       </div>
-      <div id="calendar"></div>
-      <div id="record-info"></div>
-    </div>
-  </div>
 </body>
 
 </html>
