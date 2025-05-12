@@ -37,6 +37,19 @@
         <h3>Абонемент</h3>
       </div>
 
+      <div class="progress-block">
+        <h3>Мій прогрес</h3>
+        <div id="progress-info">
+          <p><strong>Ваш поточний вага: </strong><span id="current-weight"></span> кг</p>
+          <p><strong>Кількість відвіданих тренувань: </strong><span id="training-visits">0</span></p>
+        </div>
+        <button id="edit-progress-btn" class="nav-btn">Редагувати</button>
+        <div id="edit-progress-form" style="display: none;">
+          <input type="number" id="new-weight" placeholder="Новий вага" step="0.1" />
+          <button id="save-progress-btn">Зберегти</button>
+        </div>
+      </div>
+
     </div>
 
     <div class="calendar-block">

@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.ok) {
           messageEl.textContent = "Успішний запис!";
           messageEl.style.color = "green";
-          window.location.href = "main.html";
+          window.location.href = "profile.html";
         } else {
           messageEl.textContent = result.message || "Помилка при записі";
           messageEl.style.color = "red";

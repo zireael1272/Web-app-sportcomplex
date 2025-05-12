@@ -1,6 +1,6 @@
 .profile-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 30px;
   padding: 20px;
 }
@@ -29,13 +29,37 @@
 }
 
 .user-info-details {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .subscription-block {
   background-color: #1a1a1d;
   padding: 20px;
   border-radius: 10px;
+  font-size: 18px;
+}
+
+.progress-block{
+  background-color: #1a1a1d;
+  padding: 20px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+#edit-progress-form {
+  margin-top: 10px;
+}
+
+#save-progress-btn {
+  background-color: #6f2232;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+#save-progress-btn:hover{
+ background-color: #c3073f;
 }
 
 .calendar-block {
@@ -59,7 +83,6 @@
 }
 
 .calendar-day {
-  background-color: #333;
   padding: 6px;
   border-radius: 5px;
   text-align: center;
@@ -87,3 +110,5 @@
   font-size: 16px;
   color: #ffcc00;
 }
+
+

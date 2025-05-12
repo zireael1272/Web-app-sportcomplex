@@ -69,40 +69,83 @@ document.addEventListener("DOMContentLoaded", async () => {
       const subscriptionBlock = document.querySelector(".subscription-block");
 
       if (subscriptions.length === 0) {
-    subscriptionBlock.innerHTML += "<p>У вас немає активних абонементів.</p>";
-  } else {
-    subscriptions.forEach((sub) => {
-      const purchaseDate = new Date(sub.purchase_date);
-      const endDate = new Date(purchaseDate);
+        subscriptionBlock.innerHTML += "<p>У вас немає активних абонементів.</p>";
+      } else {
+        subscriptions.forEach((sub) => {
+          const purchaseDate = new Date(sub.purchase_date);
+          const endDate = new Date(purchaseDate);
 
-      let displayText = "";
-      
-      // Переводимо тип абонемента на українську
-      let subscriptionType;
-      switch (sub.type) {
-        case "gym":
-          subscriptionType = "Тренажерний зал";
-          endDate.setDate(endDate.getDate() + sub.duration);
-          displayText = `Дійсний до ${endDate.toISOString().split("T")[0]}`;
-          break;
-        case "fitness":
-          subscriptionType = "Фітнес";
-          displayText = `${sub.duration} занять залишилося`;
-          break;
-        case "boxing":
-          subscriptionType = "Бокс";
-          displayText = `${sub.duration} занять залишилося`;
-          break;
-        default:
-          subscriptionType = sub.type;
-          displayText = "Неизвестный тип абонемента";
-      }
+          let displayText = "";
 
-      subscriptionBlock.innerHTML += `
+          // Переводимо тип абонемента на українську
+          let subscriptionType;
+          switch (sub.type) {
+            case "gym":
+              subscriptionType = "Тренажерний зал";
+              endDate.setDate(endDate.getDate() + sub.duration);
+              displayText = `Дійсний до ${endDate.toISOString().split("T")[0]}`;
+              break;
+            case "fitness":
+              subscriptionType = "Фітнес";
+              displayText = `${sub.duration} занять залишилося`;
+              break;
+            case "boxing":
+              subscriptionType = "Бокс";
+              displayText = `${sub.duration} занять залишилося`;
+              break;
+            default:
+              subscriptionType = sub.type;
+              displayText = "Неизвестный тип абонемента";
+          }
+
+          subscriptionBlock.innerHTML += `
         <p>${subscriptionType} — ${displayText}</p>
       `;
-    });
-  }
+        });
+      }
+
+      const progressResponse = await fetch(`/user-progress/${userId}`);
+      if (progressResponse.ok) {
+        const progress = await progressResponse.json();
+        document.getElementById("current-weight").textContent = progress.weight;
+        document.getElementById("training-visits").textContent = progress.visits;
+      } else {
+        console.error("Ошибка при получении прогресса");
+      }
+
+      // Функция редактирования прогресса
+      document.getElementById("edit-progress-btn").addEventListener("click", () => {
+        document.getElementById("edit-progress-form").style.display = "block";
+      });
+
+      document.getElementById("save-progress-btn").addEventListener("click", async () => {
+        const newWeight = parseFloat(document.getElementById("new-weight").value);
+
+        if (isNaN(newWeight) || newWeight <= 0) {
+          alert("Введите корректный вес");
+          return;
+        }
+
+        const response = await fetch("/update-progress", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            newWeight
+          }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert(result.message);
+          document.getElementById("current-weight").textContent = newWeight;
+          document.getElementById("edit-progress-form").style.display = "none";
+        } else {
+          alert(result.message);
+        }
+      });
 
     } catch (err) {
       console.error("Fetch error:", err);
