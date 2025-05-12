@@ -129,7 +129,6 @@ app.post("/purchase", (req, res) => {
         .json({ message: "Помилка при додаванні підписки." });
     }
 
-    // Отправляем ответ об успешной добавлении
     res.status(200).json({ message: "Абонемент успішно активовано." });
   });
 });
@@ -164,43 +163,62 @@ app.post("/booking", (req, res) => {
     return res.status(400).json({ message: "Всі поля обов'язкові." });
   }
 
-  // Перевіряємо наявність абонемента
-  const getSubscriptionQuery = "SELECT id, duration FROM subscriptions WHERE user_id = ? AND duration > 0 LIMIT 1";
+  const getSubscriptionQuery =
+    "SELECT id, duration FROM subscriptions WHERE user_id = ? AND duration > 0 LIMIT 1";
   db.query(getSubscriptionQuery, [userId], (err, result) => {
     if (err) {
       console.error("Помилка при отриманні абонемента:", err);
-      return res.status(500).json({ message: "Помилка при перевірці абонемента" });
+      return res
+        .status(500)
+        .json({ message: "Помилка при перевірці абонемента" });
     }
 
     if (result.length === 0) {
-      return res.status(400).json({ message: "У вас немає доступних абонементів." });
+      return res
+        .status(400)
+        .json({ message: "У вас немає доступних абонементів." });
     }
 
     const subscription = result[0];
     const newDuration = subscription.duration - 1;
 
     if (newDuration >= 0) {
-      const updateSubQuery = "UPDATE subscriptions SET duration = ? WHERE id = ?";
-      db.query(updateSubQuery, [newDuration, subscription.id], (errUpdate, updateResult) => {
-        if (errUpdate) {
-          console.error("Помилка оновлення абонемента:", errUpdate);
-          return res.status(500).json({ message: "Помилка при оновленні абонемента." });
-        }
-
-        const insertRecordQuery =
-          "INSERT INTO records (user_id, records_date, records_time, activity_type) VALUES (?, ?, ?, ?)";
-
-        db.query(insertRecordQuery, [userId, date, time, activity], (errInsert, insertResult) => {
-          if (errInsert) {
-            console.error("Помилка при записі:", errInsert);
-            return res.status(500).json({ message: "Помилка при записі." });
+      const updateSubQuery =
+        "UPDATE subscriptions SET duration = ? WHERE id = ?";
+      db.query(
+        updateSubQuery,
+        [newDuration, subscription.id],
+        (errUpdate, updateResult) => {
+          if (errUpdate) {
+            console.error("Помилка оновлення абонемента:", errUpdate);
+            return res
+              .status(500)
+              .json({ message: "Помилка при оновленні абонемента." });
           }
 
-          res.json({ message: "Запис успішно додано та абонемент оновлено." });
-        });
-      });
+          const insertRecordQuery =
+            "INSERT INTO records (user_id, records_date, records_time, activity_type) VALUES (?, ?, ?, ?)";
+
+          db.query(
+            insertRecordQuery,
+            [userId, date, time, activity],
+            (errInsert, insertResult) => {
+              if (errInsert) {
+                console.error("Помилка при записі:", errInsert);
+                return res.status(500).json({ message: "Помилка при записі." });
+              }
+
+              res.json({
+                message: "Запис успішно додано та абонемент оновлено.",
+              });
+            }
+          );
+        }
+      );
     } else {
-      res.status(400).json({ message: "Кількість занять у вашому абонементі закінчилася." });
+      res
+        .status(400)
+        .json({ message: "Кількість занять у вашому абонементі закінчилася." });
     }
   });
 });
@@ -270,38 +288,114 @@ app.post("/user-subscriptions", (req, res) => {
   });
 });
 
-app.post("/progress-add", async (req, res) => {
+app.post("/progress-add", (req, res) => {
   const { userId, weight } = req.body;
 
-  if (!userId || isNaN(weight)) {
-    return res.status(400).json({ error: "Некоректні дані" });
+  if (!userId || !weight) {
+    return res.status(400).json({ message: "userId і weight обов'язкові" });
   }
 
-  try {
-    await db.query(
-      "INSERT INTO progress (user_id, weight) VALUES (?, ?)",
-      [userId, weight]
-    );
-    res.status(200).json({ message: "Прогрес додано" });
-  } catch (err) {
-    console.error("DB error:", err);
-    res.status(500).json({ error: "Помилка збереження прогресу" });
+  const query = `
+    INSERT INTO progress (user_id, weight, record_date)
+    VALUES (?, ?, NOW())
+  `;
+  db.query(query, [userId, weight], (err, result) => {
+    if (err) {
+      console.error("Помилка при додаванні ваги:", err);
+      return res.status(500).json({ message: "Помилка сервера" });
+    }
+
+    res.status(200).json({ message: "Вага додана успішно" });
+  });
+});
+
+app.post("/progress-current", (req, res) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: "userId обов'язковий." });
   }
+
+  const query = `
+    SELECT weight, record_date
+    FROM progress
+    WHERE user_id = ?
+    ORDER BY record_date DESC
+    LIMIT 1
+  `;
+
+  db.query(query, [userId], (err, result) => {
+    if (err) {
+      console.error("Помилка при отриманні поточної ваги:", err);
+      return res.status(500).json({ message: "Помилка сервера" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Вага не знайдена" });
+    }
+
+    res.json(result[0]);
+  });
 });
 
 app.post("/progress", (req, res) => {
   const { userId } = req.body;
 
-  if (!userId) return res.status(400).json({ message: "userId обов’язковий" });
+  if (!userId) {
+    return res.status(400).json({ message: "userId обов'язковий" });
+  }
 
-  const query = "SELECT weight, visits, record_date FROM progress WHERE user_id = ? ORDER BY record_date DESC";
-  db.query(query, [userId], (err, results) => {
-    if (err) return res.status(500).json({ message: "DB error" });
-    res.json(results);
+  const query = `
+    SELECT weight, record_date
+    FROM progress
+    WHERE user_id = ?
+    ORDER BY record_date
+  `;
+
+  db.query(query, [userId], (err, result) => {
+    if (err) {
+      console.error("Помилка при отриманні історії ваги:", err);
+      return res.status(500).json({ message: "Помилка сервера" });
+    }
+
+    res.json(result);
   });
 });
 
+// Додати відвідування
+app.post("/visits-add", (req, res) => {
+  const { userId, date } = req.body;
+  const query = `INSERT INTO attendance (user_id, date) VALUES (?, ?)`;
 
+  db.query(query, [userId, date], (err) => {
+    if (err) return res.status(500).json({ message: "DB error" });
+    res.json({ message: "Added" });
+  });
+});
+
+// Отримати всі відвідування
+app.post("/visits-get", (req, res) => {
+  const userId = req.params.userId;
+
+  const query = `
+    SELECT date FROM attendance WHERE user_id = ?;
+    SELECT DATE(training_date) AS date, training_type FROM bookings WHERE user_id = ?;
+  `;
+
+  db.query(query, [userId, userId], (err, results) => {
+    if (err) return res.status(500).json({ message: "DB error" });
+
+    const attended = results[0].map((r) => r.date.toISOString().split("T")[0]);
+    const bookings = results[1];
+    const fitness = bookings
+      .filter((b) => b.training_type === "Фітнес")
+      .map((b) => b.date.toISOString().split("T")[0]);
+    const box = bookings
+      .filter((b) => b.training_type === "Бокс")
+      .map((b) => b.date.toISOString().split("T")[0]);
+
+    res.json({ attended, fitness, box });
+  });
+});
 
 app.listen(8080, () => {
   console.log("Сервер запущено на http://localhost:8080");

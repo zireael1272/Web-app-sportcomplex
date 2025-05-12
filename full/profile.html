@@ -1,67 +1,79 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Особистий кабінет | Спортивний центр Phenix</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/profilestyle.css" />
+    <script src="js/calendar_profile.js" defer></script>
+    <script src="/js/profile.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/profile_main.js"></script>
+    <script src="/js/subscriptions_show.js"></script>
+    <script src="/js/visit.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Особистий кабінет | Спортивний центр Phenix</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/profilestyle.css" />
-  <script src="js/profile.js" defer></script>
-  <script src="js/calendar_profile.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-
-<body>
-  <header>
-    <div class="header-content">
-      <div class="nav-left">
-        <button class="nav-btn" onclick="history.back()">Назад</button>
-      </div>
-      <a href="main.html" class="center-title">Phenix</a>
-      <a href="#" id="logout-btn" class="nav-btn">Вийти</a>
-    </div>
-  </header>
-
-  <div class="profile-container">
-    <div class="left-block">
-      <div class="user-info">
-        <img src="/images/user.png" alt="Avatar" />
-        <div class="user-info-details">
-          <p><strong>ПІБ:</strong> <span id="full-name"></span></p>
-          <p><strong>Телефон:</strong> <span id="phone"></span></p>
-          <p><strong>Email:</strong> <span id="email"></span></p>
-          <p><strong>Вік:</strong> <span id="birth-date"></span></p>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="nav-left">
+          <button class="nav-btn" onclick="history.back()">Назад</button>
         </div>
+        <a href="main.html" class="center-title">Phenix</a>
+        <a href="#" id="logout-btn" class="nav-btn">Вийти</a>
       </div>
+    </header>
 
-      <div class="subscription-block">
-        <h3>Абонемент</h3>
-      </div>
+    <div class="profile-container">
+      <div class="left-block">
+        <div class="user-info">
+          <img src="/images/user.png" alt="Avatar" />
+          <div class="user-info-details">
+            <p><strong>ПІБ:</strong> <span id="full-name"></span></p>
+            <p><strong>Телефон:</strong> <span id="phone"></span></p>
+            <p><strong>Email:</strong> <span id="email"></span></p>
+            <p><strong>Вік:</strong> <span id="birth-date"></span></p>
+          </div>
+        </div>
 
-      <div class="progress-block">
-        <h2>Трекінг успіхів</h2>
-        <div class="progress-form">
-          <h3>Додати прогрес</h3>
-          <form id="add-progress-form">
-            <label for="weight">Вага (кг):</label>
-            <input type="number" id="weight" name="weight" step="0.1" required />
+        <div class="subscription-block">
+          <h3>Абонемент</h3>
+        </div>
 
-            <button type="submit">Зберегти</button>
-          </form>
+        <div class="progress-block">
+          <h2>Трекінг успіхів</h2>
+          <div id="current-weight"></div>
+          <div id="add-weight-container">
+            <h3>Додати вагу</h3>
+            <form id="add-progress-form">
+              <label for="weight">Вага (кг):</label>
+              <input type="number" id="weight" name="weight" required min="0" />
+              <button type="submit" class="nav-btn">Додати</button>
+            </form>
+          </div>
           <div id="progress-list"></div>
-          <canvas id="progressChart" width="400" height="200"></canvas>
         </div>
-
       </div>
-    </div>
-    <div class="calendar-block">
+
+      <div class="calendar-block">
         <h3>Мої записи</h3>
         <div id="calendar-header">
           <h3><span id="month-year"></span></h3>
         </div>
         <div id="calendar"></div>
         <div id="record-info"></div>
+        <div class="attendance-block">
+          <h3>Календар відвідувань</h3>
+          <div id="attendance-calendar"></div>
+          <div id="attendance-info"></div>
+        </div>
       </div>
-</body>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div id="weight-chart-container">
+      <canvas id="weightChart"></canvas>
+    </div>
+  </body>
 </html>
