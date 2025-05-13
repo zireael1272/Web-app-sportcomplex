@@ -17,7 +17,7 @@ function generateCalendar(date) {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const bookedFitness = [15, 20, 24, 31];
-  const bookedBoxing = [ 12, 19, 22, 28];
+  const bookedBoxing = [12, 19, 22, 28];
 
   const startOffset = firstDay === 0 ? 6 : firstDay - 1;
 
@@ -30,7 +30,10 @@ function generateCalendar(date) {
 
   for (let day = 1; day <= daysInMonth; day++) {
     const fullDate = new Date(year, month, day);
-    const dateStr = fullDate.toLocaleDateString("en-CA"); // YYYY-MM-DD без UTC зсуву
+    const localDate = new Date(
+      fullDate.getTime() - fullDate.getTimezoneOffset() * 60000
+    );
+    const dateStr = localDate.toISOString().split("T")[0];
 
     const div = document.createElement("div");
     div.classList.add("day");

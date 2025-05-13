@@ -108,7 +108,7 @@ app.post("/get_user_id", (req, res) => {
   );
 });
 
-app.post('/update_profile', async (req, res) => {
+app.post("/update_profile", async (req, res) => {
   const { userId, fullName, phoneNumber, email } = req.body;
 
   if (!userId || !fullName) {
@@ -181,13 +181,11 @@ app.post("/booking", (req, res) => {
     return res.status(400).json({ message: "Всі поля обов'язкові." });
   }
 
-  // Визначення типу активності для БД
   let dbActivity;
   if (activity === "Фітнес") dbActivity = "fitness";
   else if (activity === "Бокс") dbActivity = "boxing";
   else return res.status(400).json({ message: "Недійсний тип активності." });
 
-  // Перевірити наявність абонемента на відповідну активність
   const getSubscriptionQuery = `
     SELECT id, duration 
     FROM subscriptions 
@@ -230,77 +228,62 @@ app.post("/booking", (req, res) => {
         INSERT INTO records (user_id, records_date, records_time, activity_type) 
         VALUES (?, ?, ?, ?)
       `;
-      db.query(insertRecordQuery, [userId, date, time, dbActivity], (errInsert) => {
-        if (errInsert) {
-          console.error("Помилка при записі:", errInsert);
-          return res.status(500).json({ message: "Помилка при записі." });
+      db.query(
+        insertRecordQuery,
+        [userId, date, time, dbActivity],
+        (errInsert) => {
+          if (errInsert) {
+            console.error("Помилка при записі:", errInsert);
+            return res.status(500).json({ message: "Помилка при записі." });
+          }
+
+          res.json({
+            message: "Запис успішний. Абонемент оновлено.",
+          });
         }
-
-        res.json({
-          message: "Запис успішний. Абонемент оновлено.",
-        });
-      });
+      );
     });
   });
 });
-
-app.post("/cancel_record", (req, res) => {
-  const { userId, date, time, activity } = req.body;
-
-  if (!userId || !date || !time || !activity) {
-    return res.status(400).json({ message: "Усі поля обов'язкові." });
-  }
-
-  // Видалення запису
-  const deleteQuery = `
-    DELETE FROM records 
-    WHERE user_id = ? AND records_date = ? AND records_time = ? AND activity_type = ?
-  `;
-
-  db.query(deleteQuery, [userId, date, time, activity], (err, result) => {
-    if (err) {
-      console.error("Помилка при видаленні запису:", err);
-      return res.status(500).json({ message: "Помилка при видаленні запису." });
-    }
-
-    // Повернення одного заняття в абонемент
-    const updateSubscription = `
-      UPDATE subscriptions 
-      SET duration = duration + 1 
-      WHERE user_id = ? AND type = ? AND duration >= 0
-      LIMIT 1
-    `;
-
-    db.query(updateSubscription, [userId, activity.toLowerCase()], (err2) => {
-      if (err2) {
-        console.error("Помилка при оновленні абонемента:", err2);
-        return res.status(500).json({ message: "Запис видалено, але абонемент не оновлено." });
-      }
-
-      res.json({ message: "Запис успішно скасовано." });
-    });
-  });
-});
-
-
 
 app.post("/records", (req, res) => {
-  const userId = req.body.userId;
-
-  if (!userId) {
-    return res.status(400).json({ message: "userId обов'язковий" });
-  }
-
-  const query =
+  const { userId } = req.body;
+  const sql =
     "SELECT records_date, records_time, activity_type FROM records WHERE user_id = ?";
-  db.query(query, [userId], (err, results) => {
+  db.query(sql, [userId], (err, results) => {
     if (err) {
-      console.error("DB error:", err);
-      return res.status(500).json({ message: "Помилка бази даних" });
+      console.error("Помилка запиту:", err);
+      return res.status(500).send("Database error");
     }
-
     res.json(results);
   });
+});
+
+app.post("/cancel_record", async (req, res) => {
+  try {
+    const { userId, date, time, activity } = req.body;
+
+    console.log("Отримано для скасування:", { userId, date, time, activity });
+
+    const result = await db.query(
+      `DELETE FROM records 
+       WHERE user_id = ? 
+       AND records_date >= ? 
+       AND records_date < ? 
+       AND records_time = ?
+       AND activity_type = ?`,
+      [userId, date, time, activity]
+    );
+
+    if (result[0]?.affectedRows > 0) {
+      res.json({ message: "Запис скасовано" });
+    } else {
+      res.status(404).json({ message: "Запис не знайдено" });
+    }
+  } catch (error) {
+    console.error("Помилка при скасуванні запису:", error);
+    res.status(500).json({ message: "Серверна помилка" });
+  }
 });
 
 app.post("/profile_data", (req, res) => {

@@ -10,12 +10,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let recordsMap = {};
 
+  // Завантаження записів користувача
   try {
     const response = await fetch("/records", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId }),
     });
 
@@ -25,7 +24,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     records.forEach((rec) => {
       const date = rec.records_date.split("T")[0];
-      recordsMap[date] = `${rec.records_time} – ${rec.activity_type}`;
+      recordsMap[date] = {
+        time: rec.records_time,
+        activity: rec.activity_type,
+      };
     });
   } catch (err) {
     console.error("Помилка при отриманні записів:", err);
@@ -33,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // Побудова календаря
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -87,58 +90,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     dayEl.addEventListener("click", () => {
-      recordInfo.innerHTML = ""; // очищення
+      recordInfo.innerHTML = "";
 
       if (recordsMap[isoDate]) {
-        const [time, activity] = recordsMap[isoDate].split(" – ");
+        const { time, activity } = recordsMap[isoDate];
 
-        // Текст
         const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${month + 1}.${year}: ${time} – ${activity}`;
+        infoText.textContent = `${i}.${
+          month + 1
+        }.${year}: ${time} – ${activity}`;
 
-        // Кнопка скасування
         const cancelBtn = document.createElement("button");
         cancelBtn.textContent = "Скасувати запис";
-        cancelBtn.style.marginTop = "10px";
-        cancelBtn.style.padding = "6px 12px";
-        cancelBtn.style.backgroundColor = "#c3073f";
-        cancelBtn.style.color = "white";
-        cancelBtn.style.border = "none";
-        cancelBtn.style.cursor = "pointer";
-        cancelBtn.style.borderRadius = "5px";
+        cancelBtn.className = "cancel-btn";
 
-        cancelBtn.addEventListener("click", async () => {
-          const confirmCancel = confirm(`Ви дійсно хочете скасувати запис на ${activity} о ${time}?`);
-
-          if (!confirmCancel) return;
-
-          try {
-            const res = await fetch("/cancel_record", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                userId,
-                date: isoDate,
-                time,
-                activity,
-              }),
-            });
-
-            const result = await res.json();
-
-            if (res.ok) {
-              alert("Запис скасовано");
-              location.reload();
-            } else {
-              alert(result.message || "Помилка при скасуванні");
-            }
-          } catch (err) {
-            console.error("Помилка скасування:", err);
-            alert("Серверна помилка");
-          }
+        cancelBtn.addEventListener("click", () => {
+          cancelRecord(userId, isoDate, time, activity);
         });
 
-        // Додаємо все
         recordInfo.appendChild(infoText);
         recordInfo.appendChild(cancelBtn);
       } else {
@@ -149,3 +118,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     calendarEl.appendChild(dayEl);
   }
 });
+
+async function cancelRecord(userId, date, time, activity) {
+  const confirmCancel = confirm(
+    `Ви дійсно хочете скасувати запис на ${activity} о ${time}?`
+  );
+  if (!confirmCancel) return;
+
+  try {
+    const res = await fetch("/cancel_record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, date, time, activity }),
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("Запис скасовано");
+      location.reload();
+    } else {
+      alert(result.message || "Помилка при скасуванні");
+    }
+  } catch (err) {
+    console.error("Помилка скасування:", err);
+    alert("Серверна помилка");
+  }
+}
