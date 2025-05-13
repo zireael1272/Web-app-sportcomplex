@@ -160,8 +160,6 @@ app.post("/subscriptions", (req, res) => {
     return res.status(400).json({ error: "userId обов'язковий" });
   }
 
-  console.log(`Запит на отримання абонементів для користувача: ${userId}`);
-
   const query = "SELECT * FROM subscriptions WHERE user_id = ?";
   db.query(query, [userId], (err, results) => {
     if (err) {
@@ -183,13 +181,22 @@ app.post("/booking", (req, res) => {
     return res.status(400).json({ message: "Всі поля обов'язкові." });
   }
 
-  const activityEng =
-    activity === "Фітнес" ? "fitness" : activity === "Бокс" ? "boxing" : activity;
+  // Визначення типу активності для БД
+  let dbActivity;
+  if (activity === "Фітнес") dbActivity = "fitness";
+  else if (activity === "Бокс") dbActivity = "boxing";
+  else return res.status(400).json({ message: "Недійсний тип активності." });
 
-  const getSubscriptionQuery =
-    "SELECT id, duration FROM subscriptions WHERE user_id = ? AND duration > 0 LIMIT 1";
-
-  db.query(getSubscriptionQuery, [userId], (err, result) => {
+  // Перевірити наявність абонемента на відповідну активність
+  const getSubscriptionQuery = `
+    SELECT id, duration 
+    FROM subscriptions 
+    WHERE user_id = ? 
+      AND type = ? 
+      AND duration > 0 
+    LIMIT 1
+  `;
+  db.query(getSubscriptionQuery, [userId, dbActivity], (err, result) => {
     if (err) {
       console.error("Помилка при отриманні абонемента:", err);
       return res
@@ -200,59 +207,38 @@ app.post("/booking", (req, res) => {
     if (result.length === 0) {
       return res
         .status(400)
-        .json({ message: "У вас немає доступних абонементів." });
+        .json({ message: "Немає активного абонемента на цей тип занять." });
     }
 
     const subscription = result[0];
     const newDuration = subscription.duration - 1;
 
-    if (newDuration < 0) {
-      return res
-        .status(400)
-        .json({ message: "Кількість занять у вашому абонементі закінчилася." });
-    }
-
-    const checkExisting =
-      "SELECT * FROM records WHERE user_id = ? AND records_date = ? AND records_time = ? AND activity_type = ?";
-    db.query(checkExisting, [userId, date, time, activityEng], (errCheck, existing) => {
-      if (errCheck) {
-        console.error("Помилка при перевірці записів:", errCheck);
-        return res.status(500).json({ message: "Помилка при перевірці записів." });
+    const updateSubQuery = `
+      UPDATE subscriptions 
+      SET duration = ? 
+      WHERE id = ?
+    `;
+    db.query(updateSubQuery, [newDuration, subscription.id], (errUpdate) => {
+      if (errUpdate) {
+        console.error("Помилка оновлення абонемента:", errUpdate);
+        return res
+          .status(500)
+          .json({ message: "Помилка при оновленні абонемента." });
       }
 
-      if (existing.length > 0) {
-        return res.status(400).json({ message: "Ви вже записані на цей час." });
-      }
-
-      const updateSubQuery =
-        "UPDATE subscriptions SET duration = ? WHERE id = ?";
-      db.query(updateSubQuery, [newDuration, subscription.id], (errUpdate) => {
-        if (errUpdate) {
-          console.error("Помилка оновлення абонемента:", errUpdate);
-          return res
-            .status(500)
-            .json({ message: "Помилка при оновленні абонемента." });
+      const insertRecordQuery = `
+        INSERT INTO records (user_id, records_date, records_time, activity_type) 
+        VALUES (?, ?, ?, ?)
+      `;
+      db.query(insertRecordQuery, [userId, date, time, dbActivity], (errInsert) => {
+        if (errInsert) {
+          console.error("Помилка при записі:", errInsert);
+          return res.status(500).json({ message: "Помилка при записі." });
         }
 
-        const insertRecordQuery =
-          "INSERT INTO records (user_id, records_date, records_time, activity_type) VALUES (?, ?, ?, ?)";
-
-        db.query(
-          insertRecordQuery,
-          [userId, date, time, activityEng],
-          (errInsert) => {
-            if (errInsert) {
-              console.error("Помилка при записі:", errInsert);
-              return res
-                .status(500)
-                .json({ message: "Помилка при записі." });
-            }
-
-            res.json({
-              message: "Запис успішно додано та абонемент оновлено.",
-            });
-          }
-        );
+        res.json({
+          message: "Запис успішний. Абонемент оновлено.",
+        });
       });
     });
   });
