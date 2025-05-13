@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId }), 
+      body: JSON.stringify({ userId }),
     });
 
     if (!response.ok) throw new Error("Сервер повернув помилку");
@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth(); 
+  const month = today.getMonth();
 
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const daysInMonth = lastDay.getDate();
-  const startDay = firstDay.getDay(); 
+  const startDay = firstDay.getDay();
 
   const monthNames = [
     "Січень",
@@ -87,10 +87,60 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     dayEl.addEventListener("click", () => {
+      recordInfo.innerHTML = ""; // очищення
+
       if (recordsMap[isoDate]) {
-        recordInfo.textContent = `${i}.${month + 1}.${year}: ${
-          recordsMap[isoDate]
-        }`;
+        const [time, activity] = recordsMap[isoDate].split(" – ");
+
+        // Текст
+        const infoText = document.createElement("div");
+        infoText.textContent = `${i}.${month + 1}.${year}: ${time} – ${activity}`;
+
+        // Кнопка скасування
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "Скасувати запис";
+        cancelBtn.style.marginTop = "10px";
+        cancelBtn.style.padding = "6px 12px";
+        cancelBtn.style.backgroundColor = "#c3073f";
+        cancelBtn.style.color = "white";
+        cancelBtn.style.border = "none";
+        cancelBtn.style.cursor = "pointer";
+        cancelBtn.style.borderRadius = "5px";
+
+        cancelBtn.addEventListener("click", async () => {
+          const confirmCancel = confirm(`Ви дійсно хочете скасувати запис на ${activity} о ${time}?`);
+
+          if (!confirmCancel) return;
+
+          try {
+            const res = await fetch("/cancel_record", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId,
+                date: isoDate,
+                time,
+                activity,
+              }),
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+              alert("Запис скасовано");
+              location.reload();
+            } else {
+              alert(result.message || "Помилка при скасуванні");
+            }
+          } catch (err) {
+            console.error("Помилка скасування:", err);
+            alert("Серверна помилка");
+          }
+        });
+
+        // Додаємо все
+        recordInfo.appendChild(infoText);
+        recordInfo.appendChild(cancelBtn);
       } else {
         recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;
       }

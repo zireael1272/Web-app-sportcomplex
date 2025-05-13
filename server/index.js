@@ -244,6 +244,45 @@ app.post("/booking", (req, res) => {
   });
 });
 
+app.post("/cancel_record", (req, res) => {
+  const { userId, date, time, activity } = req.body;
+
+  if (!userId || !date || !time || !activity) {
+    return res.status(400).json({ message: "Усі поля обов'язкові." });
+  }
+
+  // Видалення запису
+  const deleteQuery = `
+    DELETE FROM records 
+    WHERE user_id = ? AND records_date = ? AND records_time = ? AND activity_type = ?
+  `;
+
+  db.query(deleteQuery, [userId, date, time, activity], (err, result) => {
+    if (err) {
+      console.error("Помилка при видаленні запису:", err);
+      return res.status(500).json({ message: "Помилка при видаленні запису." });
+    }
+
+    // Повернення одного заняття в абонемент
+    const updateSubscription = `
+      UPDATE subscriptions 
+      SET duration = duration + 1 
+      WHERE user_id = ? AND type = ? AND duration >= 0
+      LIMIT 1
+    `;
+
+    db.query(updateSubscription, [userId, activity.toLowerCase()], (err2) => {
+      if (err2) {
+        console.error("Помилка при оновленні абонемента:", err2);
+        return res.status(500).json({ message: "Запис видалено, але абонемент не оновлено." });
+      }
+
+      res.json({ message: "Запис успішно скасовано." });
+    });
+  });
+});
+
+
 
 app.post("/records", (req, res) => {
   const userId = req.body.userId;
