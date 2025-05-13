@@ -1,56 +1,76 @@
-async function loadAttendanceCalendar(userId) {
+let attendanceDate = new Date(); // глобальна змінна
+
+function generateAttendanceCalendar() {
   const container = document.getElementById("attendance-calendar");
+  const header = document.getElementById("attendance-month-year");
   container.innerHTML = "";
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const year = attendanceDate.getFullYear();
+  const month = attendanceDate.getMonth(); // 0-11
+  const storageKey = `attendance_${year}_${month + 1}`;
+  const saved = JSON.parse(localStorage.getItem(storageKey)) || {};
 
-  const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfWeek = new Date(year, month, 1).getDay(); // 0 = Нд, 1 = Пн ...
 
-  // Відмічені дні з БД
-  const response = await fetch(`/visits-get`);
-  const attendanceData = await response.json();
+  const offset = (firstDayOfWeek + 6) % 7; // зсунення на Пн = 0
 
-  const attendedDates = attendanceData.attended || [];
-  const futureFitness = attendanceData.fitness || [];
-  const futureBox = attendanceData.box || [];
-
-  for (let i = 0; i < firstDay; i++) {
-    container.innerHTML += `<div></div>`;
+  // Назви днів тижня
+  const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
+  for (let name of dayNames) {
+    const dayNameEl = document.createElement("div");
+    dayNameEl.textContent = name;
+    dayNameEl.classList.add("calendar-day-name");
+    container.appendChild(dayNameEl);
   }
 
+  // Пусті клітинки перед першим днем
+  for (let i = 0; i < offset; i++) {
+    const empty = document.createElement("div");
+    container.appendChild(empty);
+  }
+
+  // Дні місяця
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${year}-${(month + 1).toString().padStart(2, "0")}-${day
-      .toString()
-      .padStart(2, "0")}`;
+    const dateKey = `${year}-${month + 1}-${day}`;
+    const dayEl = document.createElement("div");
+    dayEl.textContent = day;
+    dayEl.classList.add("calendar-day");
 
-    const div = document.createElement("div");
-    div.classList.add("attendance-day");
-    div.textContent = day;
-
-    if (attendedDates.includes(dateStr)) {
-      div.classList.add("visited");
-    } else if (futureFitness.includes(dateStr) || futureBox.includes(dateStr)) {
-      if (new Date(dateStr) <= today) {
-        div.classList.add("visited");
-      } else {
-        div.classList.add("future-class");
-      }
+    if (saved[dateKey]) {
+      dayEl.classList.add("visited");
     }
 
-    div.addEventListener("click", async () => {
-      if (!attendedDates.includes(dateStr)) {
-        await fetch("/visits-add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, date: dateStr }),
-        });
-        loadAttendanceCalendar(userId);
+    dayEl.addEventListener("click", () => {
+      if (dayEl.classList.contains("visited")) {
+        dayEl.classList.remove("visited");
+        delete saved[dateKey];
+      } else {
+        dayEl.classList.add("visited");
+        saved[dateKey] = true;
       }
+      localStorage.setItem(storageKey, JSON.stringify(saved));
     });
 
-    container.appendChild(div);
+    container.appendChild(dayEl);
   }
+
+  // Підпис місяця
+  const monthNames = [
+    "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
+    "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
+  ];
+  header.textContent = `${monthNames[month]} ${year}`;
 }
+
+function changeAttendanceMonth(delta) {
+  attendanceDate.setMonth(attendanceDate.getMonth() + delta);
+  generateAttendanceCalendar();
+}
+
+function resetToCurrentMonth() {
+  attendanceDate = new Date();
+  generateAttendanceCalendar();
+}
+
+document.addEventListener("DOMContentLoaded", generateAttendanceCalendar);

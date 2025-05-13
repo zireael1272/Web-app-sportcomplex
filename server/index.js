@@ -108,6 +108,26 @@ app.post("/get_user_id", (req, res) => {
   );
 });
 
+app.post('/update_profile', async (req, res) => {
+  const { userId, fullName, phoneNumber, email } = req.body;
+
+  if (!userId || !fullName) {
+    return res.status(400).json({ message: "Обов’язкові поля відсутні." });
+  }
+
+  try {
+    await db.query(
+      "UPDATE userdetails SET full_name = ?, phone = ?, email = ? WHERE user_id = ?",
+      [fullName, phoneNumber, email, userId]
+    );
+
+    res.json({ message: "Дані успішно збережено" });
+  } catch (error) {
+    console.error("Помилка при оновленні профілю:", error);
+    res.status(500).json({ message: "Помилка сервера" });
+  }
+});
+
 app.post("/purchase", (req, res) => {
   const { user_id, type, duration, price } = req.body;
 
@@ -163,8 +183,12 @@ app.post("/booking", (req, res) => {
     return res.status(400).json({ message: "Всі поля обов'язкові." });
   }
 
+  const activityEng =
+    activity === "Фітнес" ? "fitness" : activity === "Бокс" ? "boxing" : activity;
+
   const getSubscriptionQuery =
     "SELECT id, duration FROM subscriptions WHERE user_id = ? AND duration > 0 LIMIT 1";
+
   db.query(getSubscriptionQuery, [userId], (err, result) => {
     if (err) {
       console.error("Помилка при отриманні абонемента:", err);
@@ -182,46 +206,58 @@ app.post("/booking", (req, res) => {
     const subscription = result[0];
     const newDuration = subscription.duration - 1;
 
-    if (newDuration >= 0) {
-      const updateSubQuery =
-        "UPDATE subscriptions SET duration = ? WHERE id = ?";
-      db.query(
-        updateSubQuery,
-        [newDuration, subscription.id],
-        (errUpdate, updateResult) => {
-          if (errUpdate) {
-            console.error("Помилка оновлення абонемента:", errUpdate);
-            return res
-              .status(500)
-              .json({ message: "Помилка при оновленні абонемента." });
-          }
-
-          const insertRecordQuery =
-            "INSERT INTO records (user_id, records_date, records_time, activity_type) VALUES (?, ?, ?, ?)";
-
-          db.query(
-            insertRecordQuery,
-            [userId, date, time, activity],
-            (errInsert, insertResult) => {
-              if (errInsert) {
-                console.error("Помилка при записі:", errInsert);
-                return res.status(500).json({ message: "Помилка при записі." });
-              }
-
-              res.json({
-                message: "Запис успішно додано та абонемент оновлено.",
-              });
-            }
-          );
-        }
-      );
-    } else {
-      res
+    if (newDuration < 0) {
+      return res
         .status(400)
         .json({ message: "Кількість занять у вашому абонементі закінчилася." });
     }
+
+    const checkExisting =
+      "SELECT * FROM records WHERE user_id = ? AND records_date = ? AND records_time = ? AND activity_type = ?";
+    db.query(checkExisting, [userId, date, time, activityEng], (errCheck, existing) => {
+      if (errCheck) {
+        console.error("Помилка при перевірці записів:", errCheck);
+        return res.status(500).json({ message: "Помилка при перевірці записів." });
+      }
+
+      if (existing.length > 0) {
+        return res.status(400).json({ message: "Ви вже записані на цей час." });
+      }
+
+      const updateSubQuery =
+        "UPDATE subscriptions SET duration = ? WHERE id = ?";
+      db.query(updateSubQuery, [newDuration, subscription.id], (errUpdate) => {
+        if (errUpdate) {
+          console.error("Помилка оновлення абонемента:", errUpdate);
+          return res
+            .status(500)
+            .json({ message: "Помилка при оновленні абонемента." });
+        }
+
+        const insertRecordQuery =
+          "INSERT INTO records (user_id, records_date, records_time, activity_type) VALUES (?, ?, ?, ?)";
+
+        db.query(
+          insertRecordQuery,
+          [userId, date, time, activityEng],
+          (errInsert) => {
+            if (errInsert) {
+              console.error("Помилка при записі:", errInsert);
+              return res
+                .status(500)
+                .json({ message: "Помилка при записі." });
+            }
+
+            res.json({
+              message: "Запис успішно додано та абонемент оновлено.",
+            });
+          }
+        );
+      });
+    });
   });
 });
+
 
 app.post("/records", (req, res) => {
   const userId = req.body.userId;

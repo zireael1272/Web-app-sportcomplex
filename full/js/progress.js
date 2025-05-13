@@ -1,5 +1,6 @@
 async function setupProgress(userId) {
   await loadCurrentWeight(userId);
+  await drawAttendanceChart(userId);
 
   document
     .getElementById("add-progress-form")
@@ -21,6 +22,7 @@ async function setupProgress(userId) {
       if (res.ok) {
         e.target.reset();
         await loadCurrentWeight(userId);
+        await drawAttendanceChart(userId);
       } else {
         alert("Не вдалося додати вагу");
       }
@@ -71,7 +73,6 @@ async function drawWeightChart(userId) {
 
     const progressData = await response.json();
 
-    // Витягуємо дати та вагу
     const labels = progressData.map((item) => {
       const date = new Date(item.record_date);
       return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
@@ -79,7 +80,6 @@ async function drawWeightChart(userId) {
 
     const weights = progressData.map((item) => item.weight);
 
-    // Малюємо графік
     const ctx = document.getElementById("weightChart").getContext("2d");
     new Chart(ctx, {
       type: "line",
@@ -89,11 +89,11 @@ async function drawWeightChart(userId) {
           {
             label: "Вага (кг)",
             data: weights,
-            borderColor: "#ff6b6b",
-            backgroundColor: "rgba(255, 107, 107, 0.3)",
+            borderColor: "#c3073f",
+            backgroundColor: "#6f2232",
             fill: true,
             tension: 0.3,
-            pointBackgroundColor: "#ff6b6b",
+            pointBackgroundColor: "#c3073f",
           },
         ],
       },
@@ -136,5 +136,75 @@ async function drawWeightChart(userId) {
     });
   } catch (err) {
     console.error("Помилка при побудові графіка:", err);
+  }
+}
+
+async function drawAttendanceChart(userId) {
+  try {
+    // Отримуємо дані відвідувань
+    const response = await fetch("/attendance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Помилка при завантаженні даних відвідувань");
+    }
+
+    const attendanceData = await response.json();
+
+    // Витягуємо місяці та кількість відвідувань
+    const labels = attendanceData.map((item) => {
+      const date = new Date(item.record_date);
+      return `${date.getMonth() + 1}.${date.getFullYear()}`;
+    });
+
+    const visits = attendanceData.map((item) => item.visits);  // Тут змінюється залежно від вашого формату
+
+    // Створюємо графік відвідувань
+    const attendanceCtx = document.getElementById("attendanceChart").getContext("2d");
+    new Chart(attendanceCtx, {
+      type: "bar",  // Використовуємо стовпчастий графік
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Відвідування",
+            data: visits,
+            backgroundColor: "#28a745",  // Зелений колір для стовпців
+            borderColor: "#218838",  // Трохи темніший для кордонів
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Місяць",
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: "Кількість відвідувань",
+            },
+          },
+        },
+      },
+    });
+  } catch (err) {
+    console.error("Помилка при побудові графіка відвідувань:", err);
   }
 }
