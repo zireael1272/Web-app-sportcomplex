@@ -199,34 +199,33 @@ button:hover {
 }
 
 .visited {
-  background-color: #c3073f;  /* Зелений для тренажерного залу */
+  background-color: #c3073f; /* Зелений для тренажерного залу */
 }
 
 .fitness-visited {
-  background-color: #ffcc00;  /* Синій для фітнесу */
+  background-color: #ffcc00; /* Синій для фітнесу */
 }
 
 .boxing-visited {
-  background-color: dodgerblue;  /* Червоний для боксу */
+  background-color: dodgerblue; /* Червоний для боксу */
 }
 
 #charts-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 100px;
   margin-top: 30px;
 }
 
 .chart {
-  width: 48%;
+  width: 80%;
   height: 300px;
   background-color: #1a1a1d;
   border-radius: 10px;
   padding: 20px;
 }
 
-#weightChart,
-#attendanceChart {
+#weightChart {
   width: 100% !important;
   height: 100% !important;
 }

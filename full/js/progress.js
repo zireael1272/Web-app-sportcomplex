@@ -1,6 +1,5 @@
 async function setupProgress(userId) {
   await loadCurrentWeight(userId);
-  await drawAttendanceChart(userId);
 
   document
     .getElementById("add-progress-form")
@@ -22,7 +21,6 @@ async function setupProgress(userId) {
       if (res.ok) {
         e.target.reset();
         await loadCurrentWeight(userId);
-        await drawAttendanceChart(userId);
       } else {
         alert("Не вдалося додати вагу");
       }
@@ -136,89 +134,5 @@ async function drawWeightChart(userId) {
     });
   } catch (err) {
     console.error("Помилка при побудові графіка:", err);
-  }
-}
-
-async function drawAttendanceChart(userId) {
-  try {
-    const response = await fetch("/visits-get", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Помилка при завантаженні даних відвідувань");
-    }
-
-    const attendanceData = await response.json();
-
-    // Сортування по місяцях
-    attendanceData.sort((a, b) => a.date.localeCompare(b.date));
-
-    const labels = attendanceData.map((item) => {
-      const [year, month] = item.date.split("-");
-      return `${month}.${year}`; // формат ММ.РРРР
-    });
-    const visits = attendanceData.map((item) => item.visits);
-    const fitness = attendanceData.map((item) => item.fitness);
-    const boxing = attendanceData.map((item) => item.boxing);
-
-    const attendanceCtx = document.getElementById("attendanceChart").getContext("2d");
-    new Chart(attendanceCtx, {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [
-          {
-            label: "Відвідування",
-            data: visits,
-            backgroundColor: "#c3073f",
-            borderColor: "#6f2232",
-            borderWidth: 2,
-          },
-          {
-            label: "Фітнес",
-            data: fitness,
-            backgroundColor: "#ffcc00",
-            borderColor: "#d3a900",
-            borderWidth: 2,
-          },
-          {
-            label: "Бокс",
-            data: boxing,
-            backgroundColor: "dodgerblue",
-            borderColor: "rgb(8, 103, 197)",
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: "Місяць",
-            },
-          },
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: "Кількість відвідувань",
-            },
-            ticks: {
-              stepSize: 1,
-            },
-          },
-        },
-      },
-    });
-  } catch (err) {
-    console.error("Помилка при побудові графіка відвідувань:", err);
   }
 }

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const buttons = document.querySelectorAll(".nav-btn");
+  const buttons = document.querySelectorAll(".buy-btn");
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {

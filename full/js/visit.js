@@ -1,4 +1,4 @@
-let attendanceDate = new Date(); 
+let attendanceDate = new Date();
 
 function generateAttendanceCalendar() {
   const container = document.getElementById("attendance-calendar");
@@ -6,14 +6,14 @@ function generateAttendanceCalendar() {
   container.innerHTML = "";
 
   const year = attendanceDate.getFullYear();
-  const month = attendanceDate.getMonth();  // 0-11
+  const month = attendanceDate.getMonth();
   const storageKey = `attendance_${year}_${month + 1}`;
   const saved = JSON.parse(localStorage.getItem(storageKey)) || {};
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayOfWeek = new Date(year, month, 1).getDay();  
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
 
-  const offset = (firstDayOfWeek + 6) % 7;  
+  const offset = (firstDayOfWeek + 6) % 7;
 
   const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
   for (let name of dayNames) {
@@ -29,49 +29,47 @@ function generateAttendanceCalendar() {
   }
 
   const userId = localStorage.getItem("userId");
-  const monthStr = `${attendanceDate.getFullYear()}-${String(attendanceDate.getMonth() + 1).padStart(2, "0")}`;
-
+  const monthStr = `${attendanceDate.getFullYear()}-${String(
+    attendanceDate.getMonth() + 1
+  ).padStart(2, "0")}`;
   fetch("/visits-get", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId, month: monthStr }),
   })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error("Ошибка при загрузке посещений");
       }
       return response.json();
     })
-    .then(visits => {
+    .then((visits) => {
       for (let day = 1; day <= daysInMonth; day++) {
         const localDate = new Date(year, month, day);
-        const dateStr = localDate.toISOString().split("T")[0]; 
-
+        const dateStr = localDate.toISOString().split("T")[0];
         const dayEl = document.createElement("div");
         dayEl.textContent = day;
         dayEl.classList.add("calendar-day");
-
-
-        const visitForDay = visits.find(visit => visit.date === dateStr);
+        const visitForDay = visits.find((visit) => visit.date === dateStr);
         if (visitForDay) {
           dayEl.classList.add("visited");
           dayEl.dataset.type = visitForDay.type;
         }
-
+        const visitType = "gym";
         dayEl.addEventListener("click", () => {
           if (dayEl.classList.contains("visited")) {
             fetch("/visits-delete", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId, date: dateStr }),
+              body: JSON.stringify({ userId, date: dateStr, type: visitType }),
             })
-              .then(response => {
+              .then((response) => {
                 if (!response.ok) {
                   throw new Error("Ошибка при удалении посещения");
                 }
                 dayEl.classList.remove("visited");
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("Ошибка при удалении посещения:", err);
                 alert("Не удалось удалить посещение");
               });
@@ -82,16 +80,16 @@ function generateAttendanceCalendar() {
               body: JSON.stringify({
                 userId: userId,
                 date: dateStr,
-                type: "gym", 
+                type: "gym",
               }),
             })
-              .then(response => {
+              .then((response) => {
                 if (!response.ok) {
                   throw new Error("Ошибка при добавлении посещения");
                 }
                 dayEl.classList.add("visited");
               })
-              .catch(err => {
+              .catch((err) => {
                 console.error("Ошибка при добавлении посещения:", err);
                 alert("Не удалось сохранить посещение");
               });
@@ -101,19 +99,27 @@ function generateAttendanceCalendar() {
         container.appendChild(dayEl);
       }
     })
-    .catch(err => {
+    .catch((err) => {
       console.error("Ошибка при загрузке посещений:", err);
       alert("Ошибка при загрузке данных посещений");
     });
 
   const monthNames = [
-    "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
-    "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
+    "Січень",
+    "Лютий",
+    "Березень",
+    "Квітень",
+    "Травень",
+    "Червень",
+    "Липень",
+    "Серпень",
+    "Вересень",
+    "Жовтень",
+    "Листопад",
+    "Грудень",
   ];
   header.textContent = `${monthNames[month]} ${year}`;
 }
-
-
 
 function changeAttendanceMonth(delta) {
   attendanceDate.setMonth(attendanceDate.getMonth() + delta);

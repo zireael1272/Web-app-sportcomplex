@@ -259,7 +259,6 @@ app.post("/records", (req, res) => {
   });
 });
 
-
 app.post("/profile_data", (req, res) => {
   const { userId } = req.body;
 
@@ -394,24 +393,25 @@ app.post("/visits-add", (req, res) => {
 });
 
 app.post("/visits-delete", (req, res) => {
-    const { userId, date, type } = req.body;
+  const { userId, date, type } = req.body;
 
   if (!userId || !date || !type) {
-    return res.status(400).json({ message: "Всі поля мають бути заповнені" });
+    return res.status(400).json({ error: "userId, date або type відсутні" });
   }
+  const query =
+    "DELETE FROM visits WHERE user_id = ? AND date = ? AND type = ?";
 
-  const sql = "DELETE FROM visits WHERE user_id = ? AND date = ? AND type = ?";
-  db.query(sql, [userId, date, type], (err, result) => {
+  db.query(query, [userId, date, type], (err, result) => {
     if (err) {
-      console.error("Error deleting visit:", err);
-      return res.status(500).json({ message: "Помилка при видаленні відвідування" });
+      console.error("DB delete error:", err);
+      return res.status(500).json({ error: "Помилка при видаленні" });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Відвідування не знайдено" });
+      return res.status(404).json({ error: "Запис не знайдено" });
     }
 
-    res.status(200).json({ message: "Відвідування успішно видалено" });
+    res.status(200).json({ success: true });
   });
 });
 
@@ -421,7 +421,9 @@ app.get("/visits-status", (req, res) => {
   const sql = `SELECT type FROM visits WHERE user_id = ? AND DATE(date) = ?`;
   db.query(sql, [userId, date], (err, results) => {
     if (err) {
-      return res.status(500).json({ message: "Помилка при завантаженні статусу відвідування" });
+      return res
+        .status(500)
+        .json({ message: "Помилка при завантаженні статусу відвідування" });
     }
 
     if (results.length > 0) {
@@ -433,9 +435,8 @@ app.get("/visits-status", (req, res) => {
   });
 });
 
-
-app.post('/visits-get', async (req, res) => {
-const { userId, month } = req.body;
+app.post("/visits-get", async (req, res) => {
+  const { userId, month } = req.body;
 
   if (!userId || !month) {
     return res.status(400).json({ message: "userId і month обов’язкові" });
@@ -456,14 +457,14 @@ const { userId, month } = req.body;
 
     const grouped = {};
 
-    results.forEach(row => {
+    results.forEach((row) => {
       const day = row.date.toISOString().split("T")[0];
       if (!grouped[day]) {
         grouped[day] = {
           date: day,
           visits: 0,
           fitness: 0,
-          boxing: 0
+          boxing: 0,
         };
       }
 
@@ -476,7 +477,6 @@ const { userId, month } = req.body;
     res.json(Object.values(grouped));
   });
 });
-
 
 app.listen(8080, () => {
   console.log("Сервер запущено на http://localhost:8080");

@@ -77,11 +77,24 @@
   text-align: center;
   text-decoration: none;
   transition: background-color 0.3s ease, transform 0.2s;
-  background-color: #4e4e50;
+  background-color: #6f2232;
   box-shadow: 0 0 10px white;
 }
 
 .subscription-item:hover {
   background-color: #6f2232;
   transform: scale(1.05);
+}
+
+.buy-btn {
+  padding: 9px 20px;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+  color: white;
 }
