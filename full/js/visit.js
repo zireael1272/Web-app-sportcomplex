@@ -1,5 +1,12 @@
 let attendanceDate = new Date();
 
+function formatDateLocal(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function generateAttendanceCalendar() {
   const container = document.getElementById("attendance-calendar");
   const header = document.getElementById("attendance-month-year");
@@ -46,7 +53,7 @@ function generateAttendanceCalendar() {
     .then((visits) => {
       for (let day = 1; day <= daysInMonth; day++) {
         const localDate = new Date(year, month, day);
-        const dateStr = localDate.toISOString().split("T")[0];
+        const dateStr = formatDateLocal(localDate);
         const dayEl = document.createElement("div");
         dayEl.textContent = day;
         dayEl.classList.add("calendar-day");
@@ -55,7 +62,6 @@ function generateAttendanceCalendar() {
           dayEl.classList.add("visited");
           dayEl.dataset.type = visitForDay.type;
         }
-        const visitType = "gym";
         dayEl.addEventListener("click", () => {
           if (dayEl.classList.contains("visited")) {
             fetch("/visits-delete", {

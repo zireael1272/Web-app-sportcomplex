@@ -394,7 +394,7 @@ app.post("/visits-add", (req, res) => {
 
 app.post("/visits-delete", (req, res) => {
   const { userId, date, type } = req.body;
-
+  console.log("Data: ", userId, date, type);
   if (!userId || !date || !type) {
     return res.status(400).json({ error: "userId, date або type відсутні" });
   }
@@ -448,7 +448,6 @@ app.post("/visits-get", async (req, res) => {
     WHERE user_id = ?
       AND DATE_FORMAT(date, '%Y-%m') = ?
   `;
-
   db.query(sql, [userId, month], (err, results) => {
     if (err) {
       console.error("Помилка при отриманні visits:", err);
@@ -458,7 +457,7 @@ app.post("/visits-get", async (req, res) => {
     const grouped = {};
 
     results.forEach((row) => {
-      const day = row.date.toISOString().split("T")[0];
+      const day = row.date.toLocaleDateString("sv-SE");
       if (!grouped[day]) {
         grouped[day] = {
           date: day,
@@ -469,7 +468,6 @@ app.post("/visits-get", async (req, res) => {
       }
 
       grouped[day].visits += 1;
-
       if (row.type === "Фітнес") grouped[day].fitness += 1;
       if (row.type === "Бокс") grouped[day].boxing += 1;
     });

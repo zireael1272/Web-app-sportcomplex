@@ -6,7 +6,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const price = urlParams.get("price");
 
   // Отображаем информацию о типе абонемента на странице
-  document.getElementById("subscription-type").textContent = type;
+  if (type == "gym") {
+    document.getElementById("subscription-type").textContent =
+      "Тренажерний зал";
+  } else if (type == "fitness") {
+    document.getElementById("subscription-type").textContent = "Фітнес";
+  } else if (type == "boxing") {
+    document.getElementById("subscription-type").textContent = "Бокс";
+  }
   document.getElementById(
     "subscription-duration"
   ).textContent = `${duration} місяців`;
@@ -35,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
     event.target.value = value;
   }
 
-  // Функция форматирования CVC
   function formatCVC(event) {
     let value = event.target.value.replace(/\D/g, "");
     if (value.length > 3) {

@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let recordsMap = {};
 
-  // Завантаження записів користувача
   try {
     const response = await fetch("/records", {
       method: "POST",
@@ -96,9 +95,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { time, activity } = recordsMap[isoDate];
 
         const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${month + 1
-          }.${year}: ${time} – ${activity}`;
-
+        infoText.textContent = `${i}.${
+          month + 1
+        }.${year}: ${time} – ${activity}`;
 
         recordInfo.appendChild(infoText);
       } else {
@@ -109,4 +108,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     calendarEl.appendChild(dayEl);
   }
 });
-

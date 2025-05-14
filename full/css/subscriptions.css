@@ -78,7 +78,7 @@
   text-decoration: none;
   transition: background-color 0.3s ease, transform 0.2s;
   background-color: #6f2232;
-  box-shadow: 0 0 10px white;
+  box-shadow: 0 0 10px rgb(96, 96, 96);
 }
 
 .subscription-item:hover {
@@ -87,14 +87,11 @@
 }
 
 .buy-btn {
-  padding: 9px 20px;
   font-size: 14px;
   text-decoration: none;
   font-weight: bold;
   border-radius: 6px;
   background-color: transparent;
   border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
   color: white;
 }

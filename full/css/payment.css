@@ -1,0 +1,72 @@
+.profile-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.payment-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: #1a1a1a;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.payment-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.subscription-info {
+  background-color: #4e4e50;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 16px;
+}
+
+.subscription-info span {
+  font-weight: bold;
+}
+
+form#payment-form {
+  display: flex;
+  flex-direction: column;
+}
+
+form#payment-form label {
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+form#payment-form input {
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+form#payment-form input:focus {
+  border-color: #ff4e50;
+  outline: none;
+}
+
+#submit-payment {
+  margin-top: 24px;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #6f2232;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+#submit-payment:hover {
+  background-color: #c3073f;
+}
