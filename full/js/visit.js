@@ -60,7 +60,7 @@ function generateAttendanceCalendar() {
 
         dayEl.addEventListener("click", () => {
           if (dayEl.classList.contains("visited")) {
-            fetch("/visits-remove", {
+            fetch("/visits-delete", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ userId, date: dateStr }),
