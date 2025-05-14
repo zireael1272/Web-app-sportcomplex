@@ -64,8 +64,7 @@ input[type="email"] {
 button {
   margin-top: 10px;
   padding: 8px 15px;
-  background-color: #28a745;
-  color: white;
+  background-color: #8a1e33;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -76,7 +75,7 @@ button.hidden {
 }
 
 button:hover {
-  background-color: #218838;
+  background-color: #c3073f;
 }
 
 .subscription-block {
@@ -199,6 +198,18 @@ button:hover {
   flex-wrap: wrap;
 }
 
+.visited {
+  background-color: #c3073f;  /* Зелений для тренажерного залу */
+}
+
+.fitness-visited {
+  background-color: #ffcc00;  /* Синій для фітнесу */
+}
+
+.boxing-visited {
+  background-color: dodgerblue;  /* Червоний для боксу */
+}
+
 #charts-container {
   display: flex;
   justify-content: space-between;
@@ -218,4 +229,10 @@ button:hover {
 #attendanceChart {
   width: 100% !important;
   height: 100% !important;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
 }

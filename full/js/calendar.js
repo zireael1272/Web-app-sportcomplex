@@ -16,7 +16,7 @@ function generateCalendar(date) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  const bookedFitness = [15, 20, 24, 31];
+  const bookedFitness = [13, 15, 20, 24, 31];
   const bookedBoxing = [12, 19, 22, 28];
 
   const startOffset = firstDay === 0 ? 6 : firstDay - 1;

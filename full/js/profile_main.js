@@ -11,8 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadSubscriptions(userId);
     await setupProgress(userId);
     await drawWeightChart(userId);
-    // await drawAttendanceChart(userId);
-    await loadAttendanceCalendar(userId);
+    await drawAttendanceChart(userId);
   } catch (err) {
     console.error("Помилка ініціалізації:", err);
   }

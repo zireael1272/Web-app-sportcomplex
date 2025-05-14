@@ -259,32 +259,6 @@ app.post("/records", (req, res) => {
   });
 });
 
-app.post("/cancel_record", async (req, res) => {
-  try {
-    const { userId, date, time, activity } = req.body;
-
-    console.log("Отримано для скасування:", { userId, date, time, activity });
-
-    const result = await db.query(
-      `DELETE FROM records 
-       WHERE user_id = ? 
-       AND records_date >= ? 
-       AND records_date < ? 
-       AND records_time = ?
-       AND activity_type = ?`,
-      [userId, date, time, activity]
-    );
-
-    if (result[0]?.affectedRows > 0) {
-      res.json({ message: "Запис скасовано" });
-    } else {
-      res.status(404).json({ message: "Запис не знайдено" });
-    }
-  } catch (error) {
-    console.error("Помилка при скасуванні запису:", error);
-    res.status(500).json({ message: "Серверна помилка" });
-  }
-});
 
 app.post("/profile_data", (req, res) => {
   const { userId } = req.body;
@@ -405,41 +379,104 @@ app.post("/progress", (req, res) => {
   });
 });
 
-// Додати відвідування
 app.post("/visits-add", (req, res) => {
-  const { userId, date } = req.body;
-  const query = `INSERT INTO attendance (user_id, date) VALUES (?, ?)`;
+  const { userId, date, type } = req.body;
 
-  db.query(query, [userId, date], (err) => {
-    if (err) return res.status(500).json({ message: "DB error" });
-    res.json({ message: "Added" });
+  const query = `INSERT INTO visits (user_id, date, type) VALUES (?, ?, ?)`;
+
+  db.query(query, [userId, date, type], (err) => {
+    if (err) {
+      console.error("DB insert error:", err);
+      return res.status(500).json({ message: "DB error" });
+    }
+    res.json({ message: "Visit added" });
   });
 });
 
-// Отримати всі відвідування
-app.post("/visits-get", (req, res) => {
-  const userId = req.params.userId;
+app.post("/visits-delete", (req, res) => {
+    const { userId, date, type } = req.body;
 
-  const query = `
-    SELECT date FROM attendance WHERE user_id = ?;
-    SELECT DATE(training_date) AS date, training_type FROM bookings WHERE user_id = ?;
+  if (!userId || !date || !type) {
+    return res.status(400).json({ message: "Всі поля мають бути заповнені" });
+  }
+
+  const sql = "DELETE FROM visits WHERE user_id = ? AND date = ? AND type = ?";
+  db.query(sql, [userId, date, type], (err, result) => {
+    if (err) {
+      console.error("Error deleting visit:", err);
+      return res.status(500).json({ message: "Помилка при видаленні відвідування" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Відвідування не знайдено" });
+    }
+
+    res.status(200).json({ message: "Відвідування успішно видалено" });
+  });
+});
+
+app.get("/visits-status", (req, res) => {
+  const { userId, date } = req.query;
+
+  const sql = `SELECT type FROM visits WHERE user_id = ? AND DATE(date) = ?`;
+  db.query(sql, [userId, date], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: "Помилка при завантаженні статусу відвідування" });
+    }
+
+    if (results.length > 0) {
+      const visit = results[0];
+      res.json({ visited: true, type: visit.type });
+    } else {
+      res.json({ visited: false });
+    }
+  });
+});
+
+
+app.post('/visits-get', async (req, res) => {
+const { userId, month } = req.body;
+
+  if (!userId || !month) {
+    return res.status(400).json({ message: "userId і month обов’язкові" });
+  }
+
+  const sql = `
+    SELECT date, type
+    FROM visits
+    WHERE user_id = ?
+      AND DATE_FORMAT(date, '%Y-%m') = ?
   `;
 
-  db.query(query, [userId, userId], (err, results) => {
-    if (err) return res.status(500).json({ message: "DB error" });
+  db.query(sql, [userId, month], (err, results) => {
+    if (err) {
+      console.error("Помилка при отриманні visits:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
 
-    const attended = results[0].map((r) => r.date.toISOString().split("T")[0]);
-    const bookings = results[1];
-    const fitness = bookings
-      .filter((b) => b.training_type === "Фітнес")
-      .map((b) => b.date.toISOString().split("T")[0]);
-    const box = bookings
-      .filter((b) => b.training_type === "Бокс")
-      .map((b) => b.date.toISOString().split("T")[0]);
+    const grouped = {};
 
-    res.json({ attended, fitness, box });
+    results.forEach(row => {
+      const day = row.date.toISOString().split("T")[0];
+      if (!grouped[day]) {
+        grouped[day] = {
+          date: day,
+          visits: 0,
+          fitness: 0,
+          boxing: 0
+        };
+      }
+
+      grouped[day].visits += 1;
+
+      if (row.type === "Фітнес") grouped[day].fitness += 1;
+      if (row.type === "Бокс") grouped[day].boxing += 1;
+    });
+
+    res.json(Object.values(grouped));
   });
 });
+
 
 app.listen(8080, () => {
   console.log("Сервер запущено на http://localhost:8080");

@@ -96,20 +96,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { time, activity } = recordsMap[isoDate];
 
         const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${
-          month + 1
-        }.${year}: ${time} – ${activity}`;
+        infoText.textContent = `${i}.${month + 1
+          }.${year}: ${time} – ${activity}`;
 
-        const cancelBtn = document.createElement("button");
-        cancelBtn.textContent = "Скасувати запис";
-        cancelBtn.className = "cancel-btn";
-
-        cancelBtn.addEventListener("click", () => {
-          cancelRecord(userId, isoDate, time, activity);
-        });
 
         recordInfo.appendChild(infoText);
-        recordInfo.appendChild(cancelBtn);
       } else {
         recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;
       }
@@ -119,29 +110,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-async function cancelRecord(userId, date, time, activity) {
-  const confirmCancel = confirm(
-    `Ви дійсно хочете скасувати запис на ${activity} о ${time}?`
-  );
-  if (!confirmCancel) return;
-
-  try {
-    const res = await fetch("/cancel_record", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, date, time, activity }),
-    });
-
-    const result = await res.json();
-
-    if (res.ok) {
-      alert("Запис скасовано");
-      location.reload();
-    } else {
-      alert(result.message || "Помилка при скасуванні");
-    }
-  } catch (err) {
-    console.error("Помилка скасування:", err);
-    alert("Серверна помилка");
-  }
-}

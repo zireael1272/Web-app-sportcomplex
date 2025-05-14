@@ -141,12 +141,9 @@ async function drawWeightChart(userId) {
 
 async function drawAttendanceChart(userId) {
   try {
-    // Отримуємо дані відвідувань
-    const response = await fetch("/attendance", {
+    const response = await fetch("/visits-get", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId }),
     });
 
@@ -156,26 +153,42 @@ async function drawAttendanceChart(userId) {
 
     const attendanceData = await response.json();
 
-    // Витягуємо місяці та кількість відвідувань
+    // Сортування по місяцях
+    attendanceData.sort((a, b) => a.date.localeCompare(b.date));
+
     const labels = attendanceData.map((item) => {
-      const date = new Date(item.record_date);
-      return `${date.getMonth() + 1}.${date.getFullYear()}`;
+      const [year, month] = item.date.split("-");
+      return `${month}.${year}`; // формат ММ.РРРР
     });
+    const visits = attendanceData.map((item) => item.visits);
+    const fitness = attendanceData.map((item) => item.fitness);
+    const boxing = attendanceData.map((item) => item.boxing);
 
-    const visits = attendanceData.map((item) => item.visits);  // Тут змінюється залежно від вашого формату
-
-    // Створюємо графік відвідувань
     const attendanceCtx = document.getElementById("attendanceChart").getContext("2d");
     new Chart(attendanceCtx, {
-      type: "bar",  // Використовуємо стовпчастий графік
+      type: "bar",
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
             label: "Відвідування",
             data: visits,
-            backgroundColor: "#28a745",  // Зелений колір для стовпців
-            borderColor: "#218838",  // Трохи темніший для кордонів
+            backgroundColor: "#c3073f",
+            borderColor: "#6f2232",
+            borderWidth: 2,
+          },
+          {
+            label: "Фітнес",
+            data: fitness,
+            backgroundColor: "#ffcc00",
+            borderColor: "#d3a900",
+            borderWidth: 2,
+          },
+          {
+            label: "Бокс",
+            data: boxing,
+            backgroundColor: "dodgerblue",
+            borderColor: "rgb(8, 103, 197)",
             borderWidth: 2,
           },
         ],
@@ -183,9 +196,7 @@ async function drawAttendanceChart(userId) {
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            display: false,
-          },
+          legend: { display: true },
         },
         scales: {
           x: {
@@ -199,6 +210,9 @@ async function drawAttendanceChart(userId) {
             title: {
               display: true,
               text: "Кількість відвідувань",
+            },
+            ticks: {
+              stepSize: 1,
             },
           },
         },
