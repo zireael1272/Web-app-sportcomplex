@@ -259,6 +259,22 @@ app.post("/records", (req, res) => {
   });
 });
 
+app.post("/record_delete", (req, res) => {
+  const { userId, date, time, type } = req.body;
+console.log("Delete: ", userId, date, time, type);
+  const sql = `
+    DELETE FROM records 
+    WHERE user_id = ? AND DATE(records_date) = ? AND records_time = ? AND activity_type = ?
+  `;
+  db.query(sql, [userId, date, time, type], (err, result) => {
+    if (err) {
+      console.error("Помилка при видаленні запису:", err);
+      return res.status(500).json({ error: "Помилка сервера" });
+    }
+    res.status(200).json({ success: true });
+  });
+});
+
 app.post("/profile_data", (req, res) => {
   const { userId } = req.body;
 
@@ -394,7 +410,6 @@ app.post("/visits-add", (req, res) => {
 
 app.post("/visits-delete", (req, res) => {
   const { userId, date, type } = req.body;
-  console.log("Data: ", userId, date, type);
   if (!userId || !date || !type) {
     return res.status(400).json({ error: "userId, date або type відсутні" });
   }

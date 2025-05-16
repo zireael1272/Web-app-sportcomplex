@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Побудова календаря
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
@@ -86,6 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (recordsMap[isoDate]) {
       dayEl.style.backgroundColor = "#c3073f";
+      dayEl.classList.add("booked");
     }
 
     dayEl.addEventListener("click", () => {
@@ -95,11 +95,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { time, activity } = recordsMap[isoDate];
 
         const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${
-          month + 1
-        }.${year}: ${time} – ${activity}`;
-
+        infoText.textContent = `${i}.${month + 1}.${year}: ${time} – ${activity}`;
         recordInfo.appendChild(infoText);
+
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Скасувати";
+        cancelButton.style.marginTop = "8px";
+        cancelButton.classList.add("cancel-button");
+
+        cancelButton.addEventListener("click", () => {
+          fetch("/record_delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId,
+              date: isoDate,
+              time,          
+              type: activity,
+            }),
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("Помилка при видаленні");
+              dayEl.classList.remove("booked");
+              dayEl.style.backgroundColor = "";
+              delete recordsMap[isoDate];
+              recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;
+            })
+            .catch((err) => {
+              console.error("Помилка при видаленні запису:", err);
+              alert("Не вдалося видалити запис");
+            });
+        });
+
+        recordInfo.appendChild(cancelButton);
       } else {
         recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;
       }
@@ -108,3 +136,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     calendarEl.appendChild(dayEl);
   }
 });
+
