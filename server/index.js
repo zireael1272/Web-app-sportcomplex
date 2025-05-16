@@ -399,7 +399,7 @@ app.post("/visits-delete", (req, res) => {
     return res.status(400).json({ error: "userId, date або type відсутні" });
   }
   const query =
-    "DELETE FROM visits WHERE user_id = ? AND date = ? AND type = ?";
+    "DELETE FROM visits WHERE user_id = ? AND DATE(date) = ? AND type = ?";
 
   db.query(query, [userId, date, type], (err, result) => {
     if (err) {

@@ -62,12 +62,13 @@ function generateAttendanceCalendar() {
           dayEl.classList.add("visited");
           dayEl.dataset.type = visitForDay.type;
         }
+        const visittype = "gym"
         dayEl.addEventListener("click", () => {
           if (dayEl.classList.contains("visited")) {
             fetch("/visits-delete", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId, date: dateStr, type: visitType }),
+              body: JSON.stringify({ userId, date: dateStr, type: visittype}),
             })
               .then((response) => {
                 if (!response.ok) {
