@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   for (let i = 1; i <= daysInMonth; i++) {
     const date = new Date(year, month, i);
-    const isoDate = date.toISOString().split("T")[0];
+    const isoDate = date.toLocaleDateString("sv-SE");
 
     const dayEl = document.createElement("div");
     dayEl.classList.add("calendar-day");
@@ -95,7 +95,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { time, activity } = recordsMap[isoDate];
 
         const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${month + 1}.${year}: ${time} – ${activity}`;
+        infoText.textContent = `${i}.${
+          month + 1
+        }.${year}: ${time} – ${activity}`;
         recordInfo.appendChild(infoText);
 
         const cancelButton = document.createElement("button");
@@ -110,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify({
               userId,
               date: isoDate,
-              time,          
+              time,
               type: activity,
             }),
           })
@@ -119,7 +121,9 @@ document.addEventListener("DOMContentLoaded", async () => {
               dayEl.classList.remove("booked");
               dayEl.style.backgroundColor = "";
               delete recordsMap[isoDate];
-              recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;
+              recordInfo.textContent = `${i}.${
+                month + 1
+              }.${year}: Немає записів`;
             })
             .catch((err) => {
               console.error("Помилка при видаленні запису:", err);
@@ -136,4 +140,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     calendarEl.appendChild(dayEl);
   }
 });
-
