@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Вхід</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/auntification.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Вхід</title>
-  <link rel="stylesheet" href="/css/style.css"/>
-  <link rel="stylesheet" href="/css/auntification.css"/>
-</head>
+  <body>
+    <header>
+      <div class="header-content">
+        <a href="main.html" class="center-title">Phenix</a>
+      </div>
+    </header>
 
-<body>
-  <header>
-    <div class="header-content">
-      <a href="main.html" class="center-title">Phenix</a>
-    </div>
-  </header>
+    <main class="auth-container">
+      <h2>Вхід</h2>
+      <form id="login-form" class="auth-form">
+        <label>Логін: <input type="text" id="username" required /></label><br />
+        <label>Пароль: <input type="password" id="password" required /></label
+        ><br />
+        <button type="submit" class="nav-btn">Увійти</button>
+      </form>
+      <p id="error-message" style="color: red"></p>
+    </main>
 
-  <section class="subscriptions">
-    <h2>Вхід</h2>
-    <form id="login-form">
-      <label>Логін: <input type="text" id="username" required /></label><br />
-      <label>Пароль: <input type="password" id="password" required /></label><br />
-      <button type="submit" class="nav-btn">Увійти</button>
-    </form>
-    <p id="error-message" style="color: red;"></p>
-  </section>
-
-  <script src="js/log_in.js" defer></script>
-</body>
-
+    <script src="js/log_in.js" defer></script>
+  </body>
 </html>
