@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   for (let i = 1; i <= daysInMonth; i++) {
     const date = new Date(year, month, i);
-    const isoDate = date.toLocaleDateString("sv-SE");
+    const isoDate = date.toISOString().split("T")[0];
 
     const dayEl = document.createElement("div");
     dayEl.classList.add("calendar-day");
