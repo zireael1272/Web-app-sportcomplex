@@ -10,6 +10,11 @@ async function loadSubscriptions(userId) {
   const subscriptions = await res.json();
   const subscriptionBlock = document.querySelector(".subscription-block");
 
+  // 🧼 Очистити перед новим виводом
+  subscriptionBlock.innerHTML = "<h3>Абонемент</h3>";
+
+  let gymEndDate = null;
+
   if (subscriptions.length === 0) {
     subscriptionBlock.innerHTML += "<p>У вас немає активних абонементів.</p>";
   } else {
@@ -23,6 +28,7 @@ async function loadSubscriptions(userId) {
         case "gym":
           subscriptionType = "Тренажерний зал";
           endDate.setDate(endDate.getDate() + sub.duration);
+          gymEndDate = endDate;
           displayText = `Дійсний до ${endDate.toISOString().split("T")[0]}`;
           break;
         case "fitness":
@@ -40,4 +46,6 @@ async function loadSubscriptions(userId) {
       subscriptionBlock.innerHTML += `<p>${subscriptionType} — ${displayText}</p>`;
     });
   }
+
+  return gymEndDate;
 }

@@ -7,9 +7,6 @@ function generateAttendanceCalendar() {
 
   const year = attendanceDate.getFullYear();
   const month = attendanceDate.getMonth();
-  const storageKey = `attendance_${year}_${month + 1}`;
-  const saved = JSON.parse(localStorage.getItem(storageKey)) || {};
-
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfWeek = new Date(year, month, 1).getDay();
 
@@ -50,51 +47,68 @@ function generateAttendanceCalendar() {
         const dayEl = document.createElement("div");
         dayEl.textContent = day;
         dayEl.classList.add("calendar-day");
+
         const visitForDay = visits.find((visit) => visit.date === dateStr);
         if (visitForDay) {
           dayEl.classList.add("visited");
           dayEl.dataset.type = visitForDay.type;
         }
-        const visittype = "gym"
-        dayEl.addEventListener("click", () => {
-          if (dayEl.classList.contains("visited")) {
-            fetch("/visits-delete", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId, date: dateStr, type: visittype}),
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Ошибка при удалении посещения");
-                }
-                dayEl.classList.remove("visited");
+
+        const today = new Date();
+        const isFuture = localDate > today;
+        const isPast = localDate < new Date(today.toDateString());
+        const isAfterSubscription =
+          !gymEndDate || localDate > new Date(gymEndDate.toDateString());
+
+        // Дозволяємо лише сьогоднішній день у межах терміну абонемента
+        if (!isFuture && !isAfterSubscription) {
+          dayEl.addEventListener("click", () => {
+            const visittype = "gym";
+            if (dayEl.classList.contains("visited")) {
+              fetch("/visits-delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  userId,
+                  date: dateStr,
+                  type: visittype,
+                }),
               })
-              .catch((err) => {
-                console.error("Ошибка при удалении посещения:", err);
-                alert("Не удалось удалить посещение");
-              });
-          } else {
-            fetch("/visits-add", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                userId: userId,
-                date: dateStr,
-                type: "gym",
-              }),
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("Ошибка при добавлении посещения");
-                }
-                dayEl.classList.add("visited");
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Ошибка при удалении посещения");
+                  }
+                  dayEl.classList.remove("visited");
+                })
+                .catch((err) => {
+                  console.error("Ошибка при удалении посещения:", err);
+                  alert("Не удалось удалить посещение");
+                });
+            } else {
+              fetch("/visits-add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  userId: userId,
+                  date: dateStr,
+                  type: "gym",
+                }),
               })
-              .catch((err) => {
-                console.error("Ошибка при добавлении посещения:", err);
-                alert("Не удалось сохранить посещение");
-              });
-          }
-        });
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Ошибка при добавлении посещения");
+                  }
+                  dayEl.classList.add("visited");
+                })
+                .catch((err) => {
+                  console.error("Ошибка при добавлении посещения:", err);
+                  alert("Не удалось сохранить посещение");
+                });
+            }
+          });
+        } else {
+          dayEl.classList.add("disabled-day"); // додай CSS клас
+        }
 
         container.appendChild(dayEl);
       }
@@ -131,4 +145,10 @@ function resetToCurrentMonth() {
   generateAttendanceCalendar();
 }
 
-document.addEventListener("DOMContentLoaded", generateAttendanceCalendar);
+let gymEndDate = null;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const userId = localStorage.getItem("userId");
+  gymEndDate = await loadSubscriptions(userId);
+  generateAttendanceCalendar();
+});

@@ -128,29 +128,49 @@ app.post("/update_profile", async (req, res) => {
   }
 });
 
-app.post("/purchase", (req, res) => {
-  const { user_id, type, duration, price } = req.body;
+app.post("/purchase", async (req, res) => {
+  const { userId, type, duration } = req.body;
 
-  if (!user_id || !type || !duration || !price) {
-    return res.status(400).json({ message: "Недостатньо даних для покупки." });
-  }
+  try {
+    // Перевіряємо, чи є існуючий абонемент у зал
+    const existing = await db.get(
+      `SELECT * FROM subscriptions WHERE user_id = ? AND type = ?`,
+      [userId, type]
+    );
 
-  const purchaseDate = new Date();
+    const now = new Date();
 
-  const query =
-    "INSERT INTO subscriptions (user_id, type, duration, price, purchase_date) VALUES (?, ?, ?, ?, ?)";
-  const values = [user_id, type, duration, price, purchaseDate];
+    if (existing && type === "gym") {
+      const purchaseDate = new Date(existing.purchase_date);
+      const endDate = new Date(purchaseDate);
+      endDate.setDate(endDate.getDate() + existing.duration);
 
-  db.query(query, values, (err, result) => {
-    if (err) {
-      console.error("Помилка при додаванні підписки: " + err.stack);
-      return res
-        .status(500)
-        .json({ message: "Помилка при додаванні підписки." });
+      // Якщо старий абонемент завершився
+      if (endDate < now) {
+        // 🔁 Оновити запис
+        await db.run(
+          `UPDATE subscriptions SET purchase_date = ?, duration = ? WHERE id = ?`,
+          [now.toISOString(), duration, existing.id]
+        );
+        return res.json({ message: "Абонемент оновлено" });
+      } else {
+        return res
+          .status(400)
+          .json({ error: "У вас ще активний абонемент у тренажерний зал" });
+      }
     }
 
-    res.status(200).json({ message: "Абонемент успішно активовано." });
-  });
+    // Якщо абонемента нема або це фітнес/бокс
+    await db.run(
+      `INSERT INTO subscriptions (user_id, type, purchase_date, duration) VALUES (?, ?, ?, ?)`,
+      [userId, type, now.toISOString(), duration]
+    );
+
+    res.json({ message: "Абонемент додано" });
+  } catch (err) {
+    console.error("Помилка при купівлі абонемента:", err);
+    res.status(500).json({ error: "Внутрішня помилка сервера" });
+  }
 });
 
 app.post("/subscriptions", (req, res) => {
@@ -194,6 +214,7 @@ app.post("/booking", (req, res) => {
       AND duration > 0 
     LIMIT 1
   `;
+
   db.query(getSubscriptionQuery, [userId, dbActivity], (err, result) => {
     if (err) {
       console.error("Помилка при отриманні абонемента:", err);
@@ -216,6 +237,7 @@ app.post("/booking", (req, res) => {
       SET duration = ? 
       WHERE id = ?
     `;
+
     db.query(updateSubQuery, [newDuration, subscription.id], (errUpdate) => {
       if (errUpdate) {
         console.error("Помилка оновлення абонемента:", errUpdate);
@@ -224,22 +246,24 @@ app.post("/booking", (req, res) => {
           .json({ message: "Помилка при оновленні абонемента." });
       }
 
+      const localDate = new Date(date);
+      const formattedDate = localDate.toISOString().slice(0, 10);
+
       const insertRecordQuery = `
         INSERT INTO records (user_id, records_date, records_time, activity_type) 
         VALUES (?, ?, ?, ?)
       `;
+
       db.query(
         insertRecordQuery,
-        [userId, date, time, dbActivity],
+        [userId, formattedDate, time, dbActivity],
         (errInsert) => {
           if (errInsert) {
             console.error("Помилка при записі:", errInsert);
             return res.status(500).json({ message: "Помилка при записі." });
           }
 
-          res.json({
-            message: "Запис успішний. Абонемент оновлено.",
-          });
+          res.json({ message: "Запис успішний. Абонемент оновлено." });
         }
       );
     });
@@ -248,26 +272,35 @@ app.post("/booking", (req, res) => {
 
 app.post("/records", (req, res) => {
   const { userId } = req.body;
-  const sql =
-    "SELECT records_date, records_time, activity_type FROM records WHERE user_id = ?";
+
+  const sql = `
+    SELECT DATE(records_date) AS records_date, records_time, activity_type
+    FROM records
+    WHERE user_id = ?
+    ORDER BY records_date DESC, records_time
+  `;
+
   db.query(sql, [userId], (err, results) => {
     if (err) {
       console.error("Помилка запиту:", err);
       return res.status(500).send("Database error");
     }
+
     res.json(results);
   });
 });
 
 app.post("/record_delete", (req, res) => {
-  const { userId, date, time, type } = req.body;
-  console.log("Delete:", userId, date, time, type);
+  const { userId, date, type } = req.body;
+
   const sql = `
     DELETE FROM records
-    WHERE user_id = ? AND records_date = ? AND records_time = ? AND activity_type = ?
+    WHERE user_id = ?
+      AND DATE(records_date) = ?
+      AND activity_type = ?
   `;
 
-  db.query(sql, [userId, date, time, type], (err, result) => {
+  db.query(sql, [userId, date, type], (err, result) => {
     if (err) {
       console.error("Помилка при видаленні запису:", err);
       return res.status(500).send("Database error");

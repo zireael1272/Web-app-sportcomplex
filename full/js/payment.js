@@ -1,11 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Получаем данные о типе абонемента из URL
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type");
   const duration = urlParams.get("duration");
   const price = urlParams.get("price");
 
-  // Отображаем информацию о типе абонемента на странице
   if (type == "gym") {
     document.getElementById("subscription-type").textContent =
       "Тренажерний зал";

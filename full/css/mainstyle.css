@@ -175,10 +175,12 @@
 }
 
 .day.disabled {
-  background-color: #999;
-  color: #ccc;
-  cursor: default;
   pointer-events: none;
+  opacity: 0.4;
+  background-color: #f0f0f0 !important;
+  color: #999;
+  cursor: not-allowed;
+  border: 1px solid #ccc;
 }
 
 .calendar-legend {

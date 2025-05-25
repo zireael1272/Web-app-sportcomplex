@@ -16,8 +16,8 @@ function generateCalendar(date) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  const bookedFitness = [13, 15, 17, 18, 20, 22, 24, 25, 27, 29, 31];
-  const bookedBoxing = [12, 14, 16, 19, 21, 23, 26, 28, 30];
+  const bookedFitness = [2, 4, 8, 11, 13, 15, 18, 24, 27, 29, 31];
+  const bookedBoxing = [1, 3, 6, 19, 21, 23, 26, 28, 30];
 
   const startOffset = firstDay === 0 ? 6 : firstDay - 1;
 
@@ -37,38 +37,47 @@ function generateCalendar(date) {
 
     const div = document.createElement("div");
     div.classList.add("day");
-
-    let type = "";
-    if (bookedFitness.includes(day)) {
-      div.classList.add("fitness");
-      type = "fitness";
-    } else if (bookedBoxing.includes(day)) {
-      div.classList.add("boxing");
-      type = "boxing";
-    }
-
     div.textContent = day;
 
-    if (type) {
-      div.addEventListener("click", () => {
-        const username = localStorage.getItem("username");
-        if (username) {
-          let type = "";
-          if (
-            div.classList.contains("fitness") &&
-            div.classList.contains("boxing")
-          ) {
-            type = "both";
-          } else if (div.classList.contains("fitness")) {
-            type = "fitness";
-          } else if (div.classList.contains("boxing")) {
-            type = "boxing";
+    const isPastDate =
+      fullDate < today &&
+      year === today.getFullYear() &&
+      month === today.getMonth();
+
+    if (isPastDate) {
+      div.classList.add("disabled-day"); // ❗ Лише сірий стиль
+    } else {
+      // Додати заняття тільки якщо день ще не пройшов
+      let type = "";
+      if (bookedFitness.includes(day)) {
+        div.classList.add("fitness");
+        type = "fitness";
+      } else if (bookedBoxing.includes(day)) {
+        div.classList.add("boxing");
+        type = "boxing";
+      }
+
+      if (type) {
+        div.addEventListener("click", () => {
+          const username = localStorage.getItem("username");
+          if (username) {
+            let type = "";
+            if (
+              div.classList.contains("fitness") &&
+              div.classList.contains("boxing")
+            ) {
+              type = "both";
+            } else if (div.classList.contains("fitness")) {
+              type = "fitness";
+            } else if (div.classList.contains("boxing")) {
+              type = "boxing";
+            }
+            window.location.href = `booking.html?date=${dateStr}&type=${type}`;
+          } else {
+            window.location.href = "register.html";
           }
-          window.location.href = `booking.html?date=${dateStr}&type=${type}`;
-        } else {
-          window.location.href = "register.html";
-        }
-      });
+        });
+      }
     }
 
     daysContainer.appendChild(div);

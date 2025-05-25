@@ -198,16 +198,22 @@ button:hover {
   flex-wrap: wrap;
 }
 
+.disabled-day {
+  pointer-events: none;
+  opacity: 0.4;
+  cursor: default;
+}
+
 .visited {
-  background-color: #c3073f; /* Зелений для тренажерного залу */
+  background-color: #c3073f;
 }
 
 .fitness-visited {
-  background-color: #ffcc00; /* Синій для фітнесу */
+  background-color: #ffcc00;
 }
 
 .boxing-visited {
-  background-color: dodgerblue; /* Червоний для боксу */
+  background-color: dodgerblue;
 }
 
 #charts-container {

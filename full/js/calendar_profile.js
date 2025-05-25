@@ -8,8 +8,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  let recordsMap = {};
+  const recordsMap = {};
 
+  // Завантаження записів користувача
   try {
     const response = await fetch("/records", {
       method: "POST",
@@ -20,28 +21,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) throw new Error("Сервер повернув помилку");
 
     const records = await response.json();
-
-    records.forEach((rec) => {
-      const date = rec.records_date.split("T")[0];
+    records.forEach(({ records_date, records_time, activity_type }) => {
+      const date = records_date.split("T")[0];
       recordsMap[date] = {
-        time: rec.records_time,
-        activity: rec.activity_type,
+        time: records_time,
+        activity: activity_type,
       };
     });
-  } catch (err) {
-    console.error("Помилка при отриманні записів:", err);
+  } catch (error) {
+    console.error("Помилка при отриманні записів:", error);
     recordInfo.textContent = "Не вдалося завантажити записи";
     return;
   }
 
+  // Генерація календаря
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
-
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const daysInMonth = lastDay.getDate();
-  const startDay = firstDay.getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startDay = new Date(year, month, 1).getDay();
 
   const monthNames = [
     "Січень",
@@ -57,35 +55,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     "Листопад",
     "Грудень",
   ];
-  const monthYear = `${monthNames[month]} ${year}`;
-  document.getElementById("month-year").textContent = monthYear;
 
+  document.getElementById(
+    "month-year"
+  ).textContent = `${monthNames[month]} ${year}`;
   calendarEl.innerHTML = "";
 
   const daysOfWeek = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
   daysOfWeek.forEach((day) => {
     const dayEl = document.createElement("div");
-    dayEl.classList.add("calendar-day-name");
+    dayEl.className = "calendar-day-name";
     dayEl.textContent = day;
     calendarEl.appendChild(dayEl);
   });
 
-  for (let i = 0; i < (startDay === 0 ? 6 : startDay - 1); i++) {
-    const emptyCell = document.createElement("div");
-    calendarEl.appendChild(emptyCell);
+  const offset = startDay === 0 ? 6 : startDay - 1;
+  for (let i = 0; i < offset; i++) {
+    calendarEl.appendChild(document.createElement("div"));
   }
 
   for (let i = 1; i <= daysInMonth; i++) {
     const date = new Date(year, month, i);
     const isoDate = date.toISOString().split("T")[0];
-
     const dayEl = document.createElement("div");
-    dayEl.classList.add("calendar-day");
+    dayEl.className = "calendar-day";
     dayEl.textContent = i;
 
     if (recordsMap[isoDate]) {
-      dayEl.style.backgroundColor = "#c3073f";
       dayEl.classList.add("booked");
+      dayEl.style.backgroundColor = "#c3073f";
+      console.log("Data: ", isoDate);
     }
 
     dayEl.addEventListener("click", () => {
@@ -94,10 +93,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (recordsMap[isoDate]) {
         const { time, activity } = recordsMap[isoDate];
 
+        const currentIsoDate = isoDate;
+        const currentTime = time;
+        const currentActivity = activity;
+        const currentDay = i;
+        const currentDayEl = dayEl;
+        console.log("Data: ", currentIsoDate);
         const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${
+        infoText.textContent = `${currentDay}.${
           month + 1
-        }.${year}: ${time} – ${activity}`;
+        }.${year}: ${currentTime} – ${currentActivity}`;
         recordInfo.appendChild(infoText);
 
         const cancelButton = document.createElement("button");
@@ -111,17 +116,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               userId,
-              date: isoDate,
-              time,
-              type: activity,
+              date: currentIsoDate,
+              type: currentActivity,
             }),
           })
             .then((res) => {
               if (!res.ok) throw new Error("Помилка при видаленні");
-              dayEl.classList.remove("booked");
-              dayEl.style.backgroundColor = "";
-              delete recordsMap[isoDate];
-              recordInfo.textContent = `${i}.${
+              currentDayEl.classList.remove("booked");
+              currentDayEl.style.backgroundColor = "";
+              delete recordsMap[currentIsoDate];
+              recordInfo.textContent = `${currentDay}.${
                 month + 1
               }.${year}: Немає записів`;
             })
