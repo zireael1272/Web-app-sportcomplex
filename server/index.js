@@ -313,6 +313,10 @@ app.post("/records", (req, res) => {
 app.post("/record_delete", (req, res) => {
   const { userId, date, type } = req.body;
 
+  if (!userId || !date || !type) {
+    return res.status(400).json({ message: "userId, date і type обов’язкові" });
+  }
+
   const sql = `
     DELETE FROM records
     WHERE user_id = ?
@@ -323,15 +327,14 @@ app.post("/record_delete", (req, res) => {
   db.query(sql, [userId, date, type], (err, result) => {
     if (err) {
       console.error("Помилка при видаленні запису:", err);
-      return res.status(500).send("Database error");
+      return res.status(500).json({ message: "Помилка сервера" });
     }
 
     if (result.affectedRows === 0) {
-      console.warn("Запис не знайдено для видалення:", req.body);
-      return res.status(404).send("Запис не знайдено");
+      return res.status(404).json({ message: "Запис не знайдено" });
     }
 
-    res.sendStatus(200);
+    res.json({ message: "Запис успішно видалено" });
   });
 });
 
@@ -505,29 +508,37 @@ app.post("/visits-get", async (req, res) => {
   `;
   db.query(sql, [userId, month], (err, results) => {
     if (err) {
-      console.error("Помилка при отриманні visits:", err);
+      console.error("Помилка при отриманні відвідувань:", err);
       return res.status(500).json({ message: "Server error" });
     }
 
-    const grouped = {};
+    const visits = results.map((row) => ({
+      date: row.date.toISOString().slice(0, 10),
+      type: row.type,
+    }));
 
-    results.forEach((row) => {
-      const day = row.date.toLocaleDateString("sv-SE");
-      if (!grouped[day]) {
-        grouped[day] = {
-          date: day,
-          visits: 0,
-          fitness: 0,
-          boxing: 0,
-        };
-      }
+    res.json(visits);
+  });
+});
 
-      grouped[day].visits += 1;
-      if (row.type === "Фітнес") grouped[day].fitness += 1;
-      if (row.type === "Бокс") grouped[day].boxing += 1;
-    });
+app.post("/sync-visits", (req, res) => {
+  const today = new Date().toISOString().slice(0, 10);
 
-    res.json(Object.values(grouped));
+  const syncQuery = `
+    INSERT INTO visits (user_id, date, type)
+    SELECT r.user_id, r.records_date, r.activity_type
+    FROM records r
+    LEFT JOIN visits v 
+      ON v.user_id = r.user_id AND v.date = r.records_date AND v.type = r.activity_type
+    WHERE r.records_date < ? AND v.user_id IS NULL
+  `;
+
+  db.query(syncQuery, [today], (err, result) => {
+    if (err) {
+      console.error("Помилка при синхронізації відвідувань:", err);
+      return res.status(500).json({ message: "Помилка при синхронізації" });
+    }
+    res.json({ message: "Відвідування синхронізовані" });
   });
 });
 

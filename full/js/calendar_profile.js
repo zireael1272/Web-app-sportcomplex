@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const recordsMap = {};
 
-  // Завантаження записів користувача
   try {
     const response = await fetch("/records", {
       method: "POST",
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Генерація календаря
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
