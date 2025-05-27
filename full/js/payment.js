@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: user_id,
+        userId: user_id,
         type: type,
         duration: duration,
         price: price,

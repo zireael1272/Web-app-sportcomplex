@@ -128,49 +128,69 @@ app.post("/update_profile", async (req, res) => {
   }
 });
 
-app.post("/purchase", async (req, res) => {
+app.post("/purchase", (req, res) => {
   const { userId, type, duration } = req.body;
 
-  try {
-    // Перевіряємо, чи є існуючий абонемент у зал
-    const existing = await db.get(
-      `SELECT * FROM subscriptions WHERE user_id = ? AND type = ?`,
-      [userId, type]
-    );
+  if (!userId || !type || !duration) {
+    return res.status(400).json({ error: "Невірні дані запиту" });
+  }
 
-    const now = new Date();
+  db.query(
+    "SELECT * FROM subscriptions WHERE user_id = ? AND type = ?",
+    [userId, type],
+    (err, results) => {
+      if (err) {
+        console.error("Помилка при запиті до БД:", err);
+        return res.status(500).json({ error: "Помилка бази даних" });
+      }
 
-    if (existing && type === "gym") {
-      const purchaseDate = new Date(existing.purchase_date);
-      const endDate = new Date(purchaseDate);
-      endDate.setDate(endDate.getDate() + existing.duration);
+      const now = new Date();
+      const nowStr = now.toISOString().slice(0, 19).replace("T", " ");
+      const existing = results[0];
 
-      // Якщо старий абонемент завершився
-      if (endDate < now) {
-        // 🔁 Оновити запис
-        await db.run(
-          `UPDATE subscriptions SET purchase_date = ?, duration = ? WHERE id = ?`,
-          [now.toISOString(), duration, existing.id]
-        );
-        return res.json({ message: "Абонемент оновлено" });
+      if (existing) {
+        const purchaseDate = new Date(existing.purchase_date);
+        const endDate = new Date(purchaseDate);
+        endDate.setDate(endDate.getDate() + existing.duration);
+
+        if (endDate < now) {
+          db.query(
+            "UPDATE subscriptions SET purchase_date = ?, duration = ? WHERE id = ?",
+            [nowStr, duration, existing.id],
+            (err) => {
+              if (err) {
+                console.error("Помилка оновлення абонемента:", err);
+                return res
+                  .status(500)
+                  .json({ error: "Не вдалося оновити абонемент" });
+              }
+
+              return res.json({ message: "Абонемент успішно активовано." });
+            }
+          );
+        } else {
+          return res.status(400).json({
+            error: "У вас ще активний абонемент на цей тип",
+          });
+        }
       } else {
-        return res
-          .status(400)
-          .json({ error: "У вас ще активний абонемент у тренажерний зал" });
+        db.query(
+          "INSERT INTO subscriptions (user_id, type, purchase_date, duration) VALUES (?, ?, ?, ?)",
+          [userId, type, nowStr, duration],
+          (err) => {
+            if (err) {
+              console.error("Помилка вставки абонемента:", err);
+              return res
+                .status(500)
+                .json({ error: "Не вдалося додати абонемент" });
+            }
+
+            return res.json({ message: "Абонемент успішно активовано." });
+          }
+        );
       }
     }
-
-    // Якщо абонемента нема або це фітнес/бокс
-    await db.run(
-      `INSERT INTO subscriptions (user_id, type, purchase_date, duration) VALUES (?, ?, ?, ?)`,
-      [userId, type, now.toISOString(), duration]
-    );
-
-    res.json({ message: "Абонемент додано" });
-  } catch (err) {
-    console.error("Помилка при купівлі абонемента:", err);
-    res.status(500).json({ error: "Внутрішня помилка сервера" });
-  }
+  );
 });
 
 app.post("/subscriptions", (req, res) => {
