@@ -9,6 +9,10 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
+header {
+  padding: 38px;
+}
+
 .auth-container h2 {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -47,6 +51,12 @@
 
 .nav-btn {
   background-color: #c3073f;
+}
+
+button.secondary {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  margin-top: 10px;
 }
 
 .details-container h2 {

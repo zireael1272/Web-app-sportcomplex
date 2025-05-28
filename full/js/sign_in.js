@@ -36,3 +36,7 @@ document
         "Помилка з’єднання з сервером.";
     }
   });
+
+document.getElementById("go-to-login")?.addEventListener("click", () => {
+  window.location.href = "/login.html";
+});

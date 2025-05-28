@@ -7,14 +7,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("logout-btn");
 
   const username = localStorage.getItem("username");
+  const userId = localStorage.getItem("userId");
 
-  if (username) {
+  if (username && userId) {
     guestBlock.style.display = "none";
     userBlock.style.display = "flex";
     usernameSpan.textContent = username;
 
     logoutBtn.addEventListener("click", function () {
       localStorage.removeItem("username");
+      localStorage.removeItem("userId");
       window.location.reload();
     });
   } else {

@@ -32,3 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+document.getElementById("go-to-register")?.addEventListener("click", () => {
+  window.location.href = "/register.html";
+});
