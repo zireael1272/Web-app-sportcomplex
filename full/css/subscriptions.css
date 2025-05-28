@@ -87,7 +87,7 @@
 }
 
 .buy-btn {
-  display: block; /* або flex */
+  display: block;
   width: 100%;
   font-size: 14px;
   text-decoration: none;

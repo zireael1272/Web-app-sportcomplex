@@ -98,9 +98,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const currentDayEl = dayEl;
         console.log("Data: ", currentIsoDate);
         const infoText = document.createElement("div");
+        const activityTranslations = {
+          fitness: "Фітнес",
+          boxing: "Бокс",
+        };
+        const translatedActivity =
+          activityTranslations[currentActivity] || currentActivity;
         infoText.textContent = `${currentDay}.${
           month + 1
-        }.${year}: ${currentTime} – ${currentActivity}`;
+        }.${year}: ${currentTime} – ${translatedActivity}`;
         recordInfo.appendChild(infoText);
 
         const cancelButton = document.createElement("button");
