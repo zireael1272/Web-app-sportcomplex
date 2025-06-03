@@ -29,12 +29,6 @@ function generateAttendanceCalendar() {
   const monthStr = `${attendanceDate.getFullYear()}-${String(
     attendanceDate.getMonth() + 1
   ).padStart(2, "0")}`;
-
-  fetch("/sync-visits", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-  });
-
   fetch("/visits-get", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -49,25 +43,15 @@ function generateAttendanceCalendar() {
     .then((visits) => {
       for (let day = 1; day <= daysInMonth; day++) {
         const localDate = new Date(year, month, day);
-        const dateStr = localDate.toISOString().slice(0, 10);
+        const dateStr = localDate.toLocaleDateString("sv-SE");
         const dayEl = document.createElement("div");
         dayEl.textContent = day;
         dayEl.classList.add("calendar-day");
 
         const visitForDay = visits.find((visit) => visit.date === dateStr);
         if (visitForDay) {
-          const type = visitForDay.type;
           dayEl.classList.add("visited");
-
-          if (type === "gym") {
-            dayEl.classList.add("visited-gym");
-          } else if (type === "fitness") {
-            dayEl.classList.add("visited-fitness");
-          } else if (type === "boxing") {
-            dayEl.classList.add("visited-boxing");
-          }
-
-          dayEl.dataset.type = type;
+          dayEl.dataset.type = visitForDay.type;
         }
 
         const today = new Date();
@@ -76,6 +60,7 @@ function generateAttendanceCalendar() {
         const isAfterSubscription =
           !gymEndDate || localDate > new Date(gymEndDate.toDateString());
 
+        // Дозволяємо лише сьогоднішній день у межах терміну абонемента
         if (!isFuture && !isAfterSubscription) {
           dayEl.addEventListener("click", () => {
             const visittype = "gym";
@@ -122,7 +107,7 @@ function generateAttendanceCalendar() {
             }
           });
         } else {
-          dayEl.classList.add("disabled-day");
+          dayEl.classList.add("disabled-day"); // додай CSS клас
         }
 
         container.appendChild(dayEl);

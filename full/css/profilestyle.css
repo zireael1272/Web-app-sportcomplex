@@ -148,6 +148,10 @@ button:hover {
   background-color: #555;
 }
 
+.calendar-day.visited {
+  background-color: #c3073f;
+}
+
 .calendar-day-name {
   font-weight: bold;
   text-align: center;
@@ -204,13 +208,12 @@ button:hover {
   background-color: #c3073f;
 }
 
-.calendar-day.visited-fitness {
-  background-color: #ffeb3b;
-  color: black;
+.fitness-visited {
+  background-color: #ffcc00;
 }
 
-.calendar-day.visited-boxing {
-  background-color: #03a9f4;
+.boxing-visited {
+  background-color: dodgerblue;
 }
 
 #charts-container {
