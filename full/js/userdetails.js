@@ -19,16 +19,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const patronymic = document.getElementById("patronymic").value.trim();
     const fullName = `${lastName} ${firstName} ${patronymic}`.trim();
 
+    const rawPhoneInput = document.getElementById("phoneNumber").value.trim();
+    const rawPhone = rawPhoneInput.replace(/\D/g, "");
+
+    if (!rawPhone.startsWith("38") || rawPhone.length !== 12) {
+      errorMsg.textContent =
+        "Номер телефону має бути у форматі +38 і містити 10 цифр після коду країни.";
+      return;
+    }
+
+    const formattedPhone = rawPhone.slice(2);
+
     const userDetails = {
       userId,
       fullName,
-      phoneNumber: document.getElementById("phoneNumber").value.trim(),
+      phoneNumber: formattedPhone,
       email: document.getElementById("email").value.trim(),
       dateOfBirth: document.getElementById("dateOfBirth").value,
     };
 
     try {
-      // крок 1: зберігаємо особисті дані
       const response = await fetch("/userdetails", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // крок 2: автологін
       const loginRes = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,13 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const loginResult = await loginRes.json();
 
       if (loginRes.ok) {
-        // зберігаємо інфо про залогіненого користувача
         localStorage.setItem("userId", loginResult.userId);
         localStorage.setItem("username", loginResult.username);
         localStorage.removeItem("tmpUsername");
         localStorage.removeItem("tmpPassword");
 
-        // крок 3: перехід на головну
         window.location.href = "main.html";
       } else {
         errorMsg.textContent = loginResult.message || "Не вдалося увійти.";
@@ -68,4 +75,23 @@ document.addEventListener("DOMContentLoaded", () => {
       errorMsg.textContent = "Помилка з'єднання з сервером.";
     }
   });
+});
+
+const phoneInput = document.getElementById("phoneNumber");
+
+phoneInput.addEventListener("input", (e) => {
+  let value = e.target.value.replace(/\D/g, "");
+  if (value.startsWith("38")) value = value.slice(2);
+
+  if (value.length > 10) {
+    value = value.slice(0, 10);
+  }
+
+  let formatted = "+38";
+  if (value.length > 0) formatted += " (" + value.slice(0, 3);
+  if (value.length >= 3) formatted += ") " + value.slice(3, 6);
+  if (value.length >= 6) formatted += " " + value.slice(6, 8);
+  if (value.length >= 8) formatted += " " + value.slice(8, 10);
+
+  e.target.value = formatted;
 });

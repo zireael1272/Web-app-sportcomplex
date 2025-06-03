@@ -32,16 +32,30 @@ app.post("/register", async (req, res) => {
     return res.status(400).json({ message: "Логін та пароль обов’язкові." });
   }
 
-  const query = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-  db.query(query, [username, password], (err, result) => {
-    if (err) {
+  const checkQuery = "SELECT id FROM users WHERE username = ?";
+  db.query(checkQuery, [username], (checkErr, checkResult) => {
+    if (checkErr) {
       return res
         .status(500)
-        .json({ message: "Помилка під час реєстрації", error: err });
+        .json({ message: "Помилка перевірки логіна", error: checkErr });
     }
 
-    res.json({ userId: result.insertId });
+    if (checkResult.length > 0) {
+      return res
+        .status(409)
+        .json({ message: "Користувач з таким логіном вже існує." });
+    }
+
+    const insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+    db.query(insertQuery, [username, password], (insertErr, result) => {
+      if (insertErr) {
+        return res
+          .status(500)
+          .json({ message: "Помилка під час реєстрації", error: insertErr });
+      }
+
+      res.json({ userId: result.insertId });
+    });
   });
 });
 
