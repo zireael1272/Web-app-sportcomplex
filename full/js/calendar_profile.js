@@ -40,23 +40,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const startDay = new Date(year, month, 1).getDay();
 
   const monthNames = [
-    "Січень",
-    "Лютий",
-    "Березень",
-    "Квітень",
-    "Травень",
-    "Червень",
-    "Липень",
-    "Серпень",
-    "Вересень",
-    "Жовтень",
-    "Листопад",
-    "Грудень",
+    "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
+    "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
   ];
 
-  document.getElementById(
-    "month-year"
-  ).textContent = `${monthNames[month]} ${year}`;
+  document.getElementById("month-year").textContent = `${monthNames[month]} ${year}`;
   calendarEl.innerHTML = "";
 
   const daysOfWeek = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
@@ -86,20 +74,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     dayEl.addEventListener("click", () => {
       recordInfo.innerHTML = "";
+
       if (recordsMap[isoDate]) {
         const { time, activity } = recordsMap[isoDate];
-        const currentDay = i;
-
-        const infoText = document.createElement("div");
         const activityTranslations = {
           fitness: "Фітнес",
           boxing: "Бокс",
         };
         const translatedActivity = activityTranslations[activity] || activity;
 
-        infoText.textContent = `${currentDay}.${
-          month + 1
-        }.${year}: ${time} – ${translatedActivity}`;
+        const infoText = document.createElement("div");
+        infoText.textContent = `${i}.${month + 1}.${year}: ${time} – ${translatedActivity}`;
         recordInfo.appendChild(infoText);
       } else {
         recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;

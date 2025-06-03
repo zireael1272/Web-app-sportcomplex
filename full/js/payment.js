@@ -12,14 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (type == "boxing") {
     document.getElementById("subscription-type").textContent = "Бокс";
   }
-  if (type == "gym") {
-    document.getElementById(
-      "subscription-duration"
-    ).textContent = `${duration} днів`;
-  } else
-    document.getElementById(
-      "subscription-duration"
-    ).textContent = `${duration} тренувань`;
+  document.getElementById(
+    "subscription-duration"
+  ).textContent = `${duration} місяців`;
   document.getElementById("subscription-price").textContent = price;
 
   const cardNumberInput = document.getElementById("card-number");
@@ -33,9 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatCardNumber(event) {
     let value = event.target.value.replace(/\D/g, "");
-    if (value.length > 16) {
-      value = value.slice(0, 16);
-    }
     value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
     event.target.value = value;
   }

@@ -45,18 +45,16 @@ function generateCalendar(date) {
       month === today.getMonth();
 
     if (isPastDate) {
-      div.classList.add("disabled-day");
+      div.classList.add("disabled-day"); // ❗ Лише сірий стиль
     } else {
+      // Додати заняття тільки якщо день ще не пройшов
       let type = "";
       if (bookedFitness.includes(day)) {
         div.classList.add("fitness");
         type = "fitness";
       } else if (bookedBoxing.includes(day)) {
-        const isSunday = fullDate.getDay() === 0;
-        if (!isSunday) {
-          div.classList.add("boxing");
-          type = "boxing";
-        }
+        div.classList.add("boxing");
+        type = "boxing";
       }
 
       if (type) {
@@ -76,8 +74,7 @@ function generateCalendar(date) {
             }
             window.location.href = `booking.html?date=${dateStr}&type=${type}`;
           } else {
-            alert("Спочатку увійдіть або зареєструйтесь");
-            window.location.href = "login.html";
+            window.location.href = "register.html";
           }
         });
       }

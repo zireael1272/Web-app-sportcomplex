@@ -49,7 +49,7 @@ function generateAttendanceCalendar() {
     .then((visits) => {
       for (let day = 1; day <= daysInMonth; day++) {
         const localDate = new Date(year, month, day);
-        const dateStr = localDate.toISOString().split("T")[0];
+        const dateStr = localDate.toISOString().slice(0, 10);
         const dayEl = document.createElement("div");
         dayEl.textContent = day;
         dayEl.classList.add("calendar-day");
