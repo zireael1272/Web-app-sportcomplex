@@ -33,23 +33,24 @@ function generateAttendanceCalendar() {
   fetch("/sync-visits", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-  });
-
-  fetch("/visits-get", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, month: monthStr }),
   })
+    .then(() => {
+      return fetch("/visits-get", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, month: monthStr }),
+      });
+    })
     .then((response) => {
-      if (!response.ok) {
-        throw new Error("Ошибка при загрузке посещений");
-      }
+      if (!response.ok) throw new Error("Ошибка при загрузке посещений");
       return response.json();
     })
     .then((visits) => {
       for (let day = 1; day <= daysInMonth; day++) {
         const localDate = new Date(year, month, day);
-        const dateStr = localDate.toISOString().slice(0, 10);
+        const dateStr = `${localDate.getFullYear()}-${String(
+          localDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
         const dayEl = document.createElement("div");
         dayEl.textContent = day;
         dayEl.classList.add("calendar-day");

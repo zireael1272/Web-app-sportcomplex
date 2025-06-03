@@ -209,7 +209,6 @@ app.post("/subscriptions", (req, res) => {
         .json({ error: "Помилка при отриманні абонементів" });
     }
 
-    console.log("Отримано абонементи:", results);
     res.json(results);
   });
 });
@@ -445,10 +444,10 @@ app.post("/visits-add", (req, res) => {
 
 app.post("/visits-delete", (req, res) => {
   const { userId, date, type } = req.body;
+
   if (!userId || !date || !type) {
     return res.status(400).json({ error: "userId, date або type відсутні" });
   }
-  console.log(req.body);
   const query =
     "DELETE FROM visits WHERE user_id = ? AND DATE(date) = ? AND type = ?";
 
@@ -486,7 +485,7 @@ app.post("/visits-get", async (req, res) => {
     }
 
     const visits = results.map((row) => ({
-      date: row.date.toISOString().slice(0, 10),
+      date: row.date.toLocaleDateString("sv-SE"),
       type: row.type,
     }));
 
@@ -503,7 +502,8 @@ app.post("/sync-visits", (req, res) => {
     FROM records r
     LEFT JOIN visits v 
       ON v.user_id = r.user_id AND v.date = r.records_date AND v.type = r.activity_type
-    WHERE r.records_date < ? AND v.user_id IS NULL
+    WHERE DATE(r.records_date) < ?
+      AND v.user_id IS NULL
   `;
 
   db.query(syncQuery, [today], (err, result) => {
