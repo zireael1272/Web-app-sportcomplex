@@ -40,11 +40,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const startDay = new Date(year, month, 1).getDay();
 
   const monthNames = [
-    "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень",
-    "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"
+    "Січень",
+    "Лютий",
+    "Березень",
+    "Квітень",
+    "Травень",
+    "Червень",
+    "Липень",
+    "Серпень",
+    "Вересень",
+    "Жовтень",
+    "Листопад",
+    "Грудень",
   ];
 
-  document.getElementById("month-year").textContent = `${monthNames[month]} ${year}`;
+  document.getElementById(
+    "month-year"
+  ).textContent = `${monthNames[month]} ${year}`;
   calendarEl.innerHTML = "";
 
   const daysOfWeek = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
@@ -70,6 +82,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (recordsMap[isoDate]) {
       dayEl.classList.add("booked");
       dayEl.style.backgroundColor = "#c3073f";
+      console.log("Data: ", isoDate);
     }
 
     dayEl.addEventListener("click", () => {
@@ -77,15 +90,56 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (recordsMap[isoDate]) {
         const { time, activity } = recordsMap[isoDate];
+
+        const currentIsoDate = isoDate;
+        const currentTime = time;
+        const currentActivity = activity;
+        const currentDay = i;
+        const currentDayEl = dayEl;
+        console.log("Data: ", currentIsoDate);
+        const infoText = document.createElement("div");
         const activityTranslations = {
           fitness: "Фітнес",
           boxing: "Бокс",
         };
-        const translatedActivity = activityTranslations[activity] || activity;
-
-        const infoText = document.createElement("div");
-        infoText.textContent = `${i}.${month + 1}.${year}: ${time} – ${translatedActivity}`;
+        const translatedActivity =
+          activityTranslations[currentActivity] || currentActivity;
+        infoText.textContent = `${currentDay}.${
+          month + 1
+        }.${year}: ${currentTime} – ${translatedActivity}`;
         recordInfo.appendChild(infoText);
+
+        const cancelButton = document.createElement("button");
+        cancelButton.textContent = "Скасувати";
+        cancelButton.style.marginTop = "8px";
+        cancelButton.classList.add("cancel-button");
+
+        cancelButton.addEventListener("click", () => {
+          fetch("/record_delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId,
+              date: currentIsoDate,
+              type: currentActivity,
+            }),
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("Помилка при видаленні");
+              currentDayEl.classList.remove("booked");
+              currentDayEl.style.backgroundColor = "";
+              delete recordsMap[currentIsoDate];
+              recordInfo.textContent = `${currentDay}.${
+                month + 1
+              }.${year}: Немає записів`;
+            })
+            .catch((err) => {
+              console.error("Помилка при видаленні запису:", err);
+              alert("Не вдалося видалити запис");
+            });
+        });
+
+        recordInfo.appendChild(cancelButton);
       } else {
         recordInfo.textContent = `${i}.${month + 1}.${year}: Немає записів`;
       }
