@@ -310,34 +310,6 @@ app.post("/records", (req, res) => {
   });
 });
 
-app.post("/record_delete", (req, res) => {
-  const { userId, date, type } = req.body;
-
-  if (!userId || !date || !type) {
-    return res.status(400).json({ message: "userId, date і type обов’язкові" });
-  }
-
-  const sql = `
-    DELETE FROM records
-    WHERE user_id = ?
-      AND DATE(records_date) = ?
-      AND activity_type = ?
-  `;
-
-  db.query(sql, [userId, date, type], (err, result) => {
-    if (err) {
-      console.error("Помилка при видаленні запису:", err);
-      return res.status(500).json({ message: "Помилка сервера" });
-    }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Запис не знайдено" });
-    }
-
-    res.json({ message: "Запис успішно видалено" });
-  });
-});
-
 app.post("/profile_data", (req, res) => {
   const { userId } = req.body;
 
@@ -476,6 +448,7 @@ app.post("/visits-delete", (req, res) => {
   if (!userId || !date || !type) {
     return res.status(400).json({ error: "userId, date або type відсутні" });
   }
+  console.log(req.body);
   const query =
     "DELETE FROM visits WHERE user_id = ? AND DATE(date) = ? AND type = ?";
 

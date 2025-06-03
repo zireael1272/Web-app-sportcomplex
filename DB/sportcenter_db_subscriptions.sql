@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sportcenter_db
 -- ------------------------------------------------------
--- Server version	8.0.41
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +32,7 @@ CREATE TABLE `subscriptions` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `subscriptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `subscriptions` (
 
 LOCK TABLES `subscriptions` WRITE;
 /*!40000 ALTER TABLE `subscriptions` DISABLE KEYS */;
-INSERT INTO `subscriptions` VALUES (1,1,'gym',28,800.00,'2025-05-11 22:24:26'),(4,1,'fitness',20,1200.00,'2025-05-12 11:57:23');
+INSERT INTO `subscriptions` VALUES (1,1,'gym',90,800.00,'2025-05-27 17:53:22'),(4,1,'fitness',19,1200.00,'2025-05-12 11:57:23'),(5,5,'gym',30,800.00,'2025-05-18 16:26:26'),(6,5,'fitness',10,600.00,'2025-05-18 16:33:19'),(7,5,'boxing',18,1200.00,'2025-05-18 16:34:42'),(9,6,'fitness',24,NULL,'2025-05-28 19:40:07'),(10,6,'gym',30,NULL,'2025-05-28 20:11:32'),(11,17,'gym',90,NULL,'2025-06-03 17:12:31'),(12,17,'fitness',11,NULL,'2025-06-03 17:13:28'),(13,18,'gym',90,NULL,'2025-06-03 17:51:17'),(14,18,'fitness',11,NULL,'2025-06-03 17:52:09');
 /*!40000 ALTER TABLE `subscriptions` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-16 15:18:02
+-- Dump completed on 2025-06-03 22:55:51

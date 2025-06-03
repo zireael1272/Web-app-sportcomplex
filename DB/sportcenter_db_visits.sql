@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --
 -- Host: localhost    Database: sportcenter_db
 -- ------------------------------------------------------
--- Server version	8.0.41
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -28,7 +28,7 @@ CREATE TABLE `visits` (
   `date` date NOT NULL,
   `type` enum('gym','fitness','boxing') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +37,7 @@ CREATE TABLE `visits` (
 
 LOCK TABLES `visits` WRITE;
 /*!40000 ALTER TABLE `visits` DISABLE KEYS */;
-INSERT INTO `visits` VALUES (7,1,'2025-05-02','gym'),(8,1,'2025-05-05','gym'),(9,1,'2025-05-07','gym'),(10,1,'2025-05-09','gym'),(12,1,'2025-05-14','gym'),(18,1,'2025-05-16','gym'),(19,1,'2025-04-02','gym'),(20,1,'2025-04-04','gym'),(21,1,'2025-04-07','gym'),(22,1,'2025-04-15','gym'),(23,1,'2025-04-17','gym'),(24,1,'2025-04-19','gym'),(25,1,'2025-04-21','gym'),(26,1,'2025-04-23','gym'),(27,1,'2025-04-25','gym'),(29,1,'2025-04-30','gym'),(30,1,'2025-05-19','gym');
+INSERT INTO `visits` VALUES (7,1,'2025-05-02','gym'),(8,1,'2025-05-05','gym'),(9,1,'2025-05-07','gym'),(10,1,'2025-05-09','gym'),(12,1,'2025-05-14','gym'),(18,1,'2025-05-16','gym'),(19,1,'2025-04-02','gym'),(20,1,'2025-04-04','gym'),(21,1,'2025-04-07','gym'),(22,1,'2025-04-15','gym'),(23,1,'2025-04-17','gym'),(24,1,'2025-04-19','gym'),(25,1,'2025-04-21','gym'),(26,1,'2025-04-23','gym'),(27,1,'2025-04-25','gym'),(29,1,'2025-04-30','gym'),(30,1,'2025-05-19','gym'),(38,1,'2025-05-21','gym'),(39,1,'2025-05-23','gym'),(41,1,'2025-05-15','fitness'),(42,1,'2025-05-24','fitness'),(43,1,'2025-05-13','fitness'),(44,5,'2025-05-12','boxing'),(48,1,'2025-05-27','fitness'),(49,6,'2025-05-27','gym'),(50,1,'2025-05-31','fitness');
 /*!40000 ALTER TABLE `visits` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-16 15:18:00
+-- Dump completed on 2025-06-03 22:55:51
