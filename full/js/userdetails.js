@@ -2,17 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const phoneInput = document.getElementById("phoneNumber");
 
   phoneInput.addEventListener("input", (e) => {
-    let digits = e.target.value.replace(/\D/g, ""); // тільки цифри
+    let digits = e.target.value.replace(/\D/g, "");
     if (digits.startsWith("380")) {
       digits = digits.slice(3);
     } else if (digits.startsWith("0")) {
       digits = digits.slice(1);
     }
 
-    // обмеження на довжину
     digits = digits.substring(0, 9);
 
-    // форматування у вигляді +380 XX XXX XX XX
     let formatted = "+380";
     if (digits.length > 0) formatted += " " + digits.slice(0, 2);
     if (digits.length > 2) formatted += " " + digits.slice(2, 5);
@@ -28,18 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const phoneRaw = phoneInput.value.replace(/\D/g, ""); // лишаємо лише цифри
+    const phoneRaw = phoneInput.value.replace(/\D/g, "");
 
-    // перевірка: повинно бути рівно 12 цифр і починатися з 380
     if (!/^380\d{9}$/.test(phoneRaw)) {
       errorMsg.textContent = "Невірний номер. Формат: +380XXXXXXXXX";
       return;
     }
 
-    // зберігаємо як 0XXXXXXXXX
     const formattedPhone = "0" + phoneRaw.slice(3);
 
-    // інші поля...
     const userId = localStorage.getItem("userId");
     const username = localStorage.getItem("tmpUsername");
     const password = localStorage.getItem("tmpPassword");
