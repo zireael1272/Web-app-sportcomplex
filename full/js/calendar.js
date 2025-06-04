@@ -74,7 +74,7 @@ function generateCalendar(date) {
             }
             window.location.href = `booking.html?date=${dateStr}&type=${type}`;
           } else {
-            window.location.href = "register.html";
+            window.location.href = "login.html";
           }
         });
       }
