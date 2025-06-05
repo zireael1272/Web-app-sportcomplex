@@ -7,14 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (type == "gym") {
     document.getElementById("subscription-type").textContent =
       "Тренажерний зал";
+    document.getElementById(
+      "subscription-duration"
+    ).textContent = `${duration} днів`;
   } else if (type == "fitness") {
     document.getElementById("subscription-type").textContent = "Фітнес";
+    document.getElementById(
+      "subscription-duration"
+    ).textContent = `${duration} тренувань`;
   } else if (type == "boxing") {
     document.getElementById("subscription-type").textContent = "Бокс";
+    document.getElementById(
+      "subscription-duration"
+    ).textContent = `${duration} тренувань`;
   }
-  document.getElementById(
-    "subscription-duration"
-  ).textContent = `${duration} місяців`;
+
   document.getElementById("subscription-price").textContent = price;
 
   const cardNumberInput = document.getElementById("card-number");
@@ -87,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alert(data.message);
           window.location.href = "profile.html";
         } else {
-          alert("Щось пішло не так при активації абонемента.");
+          alert(data.error || "Щось пішло не так при активації абонемента.");
         }
       })
       .catch((error) => {

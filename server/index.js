@@ -32,16 +32,30 @@ app.post("/register", async (req, res) => {
     return res.status(400).json({ message: "Логін та пароль обов’язкові." });
   }
 
-  const query = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-  db.query(query, [username, password], (err, result) => {
-    if (err) {
+  const checkQuery = "SELECT id FROM users WHERE username = ?";
+  db.query(checkQuery, [username], (checkErr, checkResult) => {
+    if (checkErr) {
       return res
         .status(500)
-        .json({ message: "Помилка під час реєстрації", error: err });
+        .json({ message: "Помилка перевірки логіна", error: checkErr });
     }
 
-    res.json({ userId: result.insertId });
+    if (checkResult.length > 0) {
+      return res
+        .status(409)
+        .json({ message: "Користувач з таким логіном вже існує." });
+    }
+
+    const insertQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+    db.query(insertQuery, [username, password], (insertErr, result) => {
+      if (insertErr) {
+        return res
+          .status(500)
+          .json({ message: "Помилка під час реєстрації", error: insertErr });
+      }
+
+      res.json({ userId: result.insertId });
+    });
   });
 });
 
@@ -129,9 +143,9 @@ app.post("/update_profile", async (req, res) => {
 });
 
 app.post("/purchase", (req, res) => {
-  const { userId, type, duration } = req.body;
+  const { userId, type, duration, price } = req.body;
 
-  if (!userId || !type || !duration) {
+  if (!userId || !type || !duration || !price) {
     return res.status(400).json({ error: "Невірні дані запиту" });
   }
 
@@ -155,8 +169,8 @@ app.post("/purchase", (req, res) => {
 
         if (endDate < now) {
           db.query(
-            "UPDATE subscriptions SET purchase_date = ?, duration = ? WHERE id = ?",
-            [nowStr, duration, existing.id],
+            "UPDATE subscriptions SET purchase_date = ?, duration = ?, price = ? WHERE id = ?",
+            [nowStr, duration, price, existing.id],
             (err) => {
               if (err) {
                 console.error("Помилка оновлення абонемента:", err);
@@ -175,8 +189,8 @@ app.post("/purchase", (req, res) => {
         }
       } else {
         db.query(
-          "INSERT INTO subscriptions (user_id, type, purchase_date, duration) VALUES (?, ?, ?, ?)",
-          [userId, type, nowStr, duration],
+          "INSERT INTO subscriptions (user_id, type, purchase_date, duration, price) VALUES (?, ?, ?, ?, ?)",
+          [userId, type, nowStr, duration, price],
           (err) => {
             if (err) {
               console.error("Помилка вставки абонемента:", err);
