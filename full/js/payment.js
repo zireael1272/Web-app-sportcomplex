@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatCardNumber(event) {
     let value = event.target.value.replace(/\D/g, "");
+    if (value.length > 16) {
+      value = value.slice(0, 16);
+    }
     value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
     event.target.value = value;
   }
